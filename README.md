@@ -1,6 +1,6 @@
 # AI News Game
 
-**Current build: Visible Animation 1.4**
+**Current build: Research Footer 1.5**
 
 A barebones digital prototype of the AI News Game. It closely follows the current tabletop board: Reporting, Editing, Packaging, and Audience desks, each containing five tasks.
 
@@ -56,6 +56,8 @@ Resource use is calculated separately from assignment labels: Human uses one Hum
 - Three-column allocation summaries and an animated final breakdown of unique visitors, repeat visitors, and subscribers
 - Replayable final animation explaining assignments → reach/trust → traffic/retention → subscribers/score
 - Replay visibly dims, reveals, highlights, and counts up each explanatory step in sequence
+- Authorship, copyright, UMD affiliation, funding, non-endorsement, contact, and no-data-collection notice
+- Day and final reports reset to their headings instead of opening scrolled to the bottom
 - Responsive layout and keyboard-accessible controls
 
 ## Important limitation

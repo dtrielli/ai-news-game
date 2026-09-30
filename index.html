@@ -66,6 +66,9 @@
 
     main { display: grid; grid-template-columns: minmax(520px, 2.2fr) minmax(240px, .8fr); gap: 14px; margin-top: 14px; }
     .panel { background: rgba(255, 254, 250, .72); border: 1px solid var(--line); border-radius: 10px; padding: 14px; min-height: 68vh; }
+    .project-footer { margin-top: 16px; padding: 15px 2px 4px; border-top: 1px solid var(--line); color: var(--muted); font-size: .74rem; line-height: 1.5; }
+    .project-footer p + p { margin-top: 4px; }
+    .project-footer a { color: var(--blue); }
 
     .reader-list, .story-list, .log { display: grid; gap: 9px; }
     .reader-list { max-height: 61vh; overflow: auto; }
@@ -304,11 +307,15 @@
         </div>
       </aside>
     </main>
+    <footer class="project-footer">
+      <p><strong>AI News Game</strong> is a research and educational project developed by Daniel Trielli at the University of Maryland’s Philip Merrill College of Journalism. Supported by the Lucy Dalglish Faculty Fund for Media &amp; Democracy.</p>
+      <p>© 2026 Daniel Trielli. The views expressed through this project do not necessarily represent the University of Maryland. This version does not collect or transmit player data. Contact: <a href="mailto:dtrielli@umd.edu">dtrielli@umd.edu</a>.</p>
+    </footer>
   </div>
 
   <div class="intro" id="intro" role="dialog" aria-modal="true" aria-labelledby="intro-title">
     <div class="modal">
-      <div class="kicker">Untimed prototype</div>
+      <div class="kicker">Three-day newsroom simulation</div>
       <h2 id="intro-title">Decide how the news gets made.</h2>
       <p>For every story, complete the tasks at the Reporting, Editing, Packaging, and Audience desks.</p>
       <p>Assign each task to Human, AI, or Human + AI (verified automation). There is no clock, and every choice can be revised before publication.</p>
@@ -319,7 +326,7 @@
   <div class="results hidden" id="day-summary" role="dialog" aria-modal="true" aria-labelledby="day-summary-title">
     <div class="modal">
       <div class="kicker" id="day-summary-kicker">Day complete</div>
-      <h2 id="day-summary-title">End of the day report</h2>
+      <h2 id="day-summary-title" tabindex="-1">End of the day report</h2>
       <section class="report-section" aria-labelledby="editorial-choices-title">
         <h3 id="editorial-choices-title">Your editorial choices</h3>
         <div class="result-grid allocation-grid" id="day-summary-grid"></div>
@@ -338,7 +345,7 @@
   <div class="results hidden" id="results" role="dialog" aria-modal="true" aria-labelledby="results-title">
     <div class="modal">
       <div class="kicker">Three-day simulation complete</div>
-      <h2 id="results-title">Your newsroom across three days</h2>
+      <h2 id="results-title" tabindex="-1">Your newsroom across three days</h2>
       <section class="report-section" aria-labelledby="final-editorial-title">
         <h3 id="final-editorial-title">Your three-day editorial strategy</h3>
         <div class="result-grid allocation-grid" id="final-allocation-grid"></div>
@@ -684,6 +691,6 @@
   <script src="data/scenarios.js"></script>
   <script src="data/round-events.js"></script>
   <script src="data/resource-rules.js"></script>
-  <script src="app.js?v=visible-animation-1.4"></script>
+  <script src="app.js?v=research-footer-1.5"></script>
 </body>
 </html>

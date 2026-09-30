@@ -48,6 +48,17 @@ const TASKS_PER_DAY = TOTAL_TASKS * 3;
 const state = { day: 1, stories: [], activeId: 1, nextId: 1, nextTemplate: 0, logs: [], dailyResults: [], repeatVisitors: 0, totalTraffic: 0 };
 const $ = selector => document.querySelector(selector);
 
+function focusReportTop(dialogSelector, titleSelector) {
+  requestAnimationFrame(() => {
+    const dialog = $(dialogSelector);
+    const panel = dialog?.querySelector('.modal');
+    if (panel) panel.scrollTop = 0;
+    const title = $(titleSelector);
+    if (title) title.focus({ preventScroll: true });
+    if (panel) panel.scrollTop = 0;
+  });
+}
+
 function makeAssignments() { return DESKS.map(desk => Array(desk.tasks.length).fill(null)); }
 function makeStory() {
   const scenario = STORY_POOL[state.nextTemplate % STORY_POOL.length];
@@ -282,7 +293,7 @@ function showDaySummary(result, review = false) {
   $('#next-day').textContent = review ? `Close Day ${result.day} report` : state.day < 3 ? `Begin Day ${state.day + 1}` : 'View three-day summary';
   $('#day-summary').classList.remove('hidden');
   animateSummary($('#day-summary'));
-  $('#next-day').focus();
+  focusReportTop('#day-summary', '#day-summary-title');
 }
 
 function showFinalSummary() {
@@ -333,7 +344,7 @@ function showFinalSummary() {
   $('#results').classList.remove('hidden');
   animateSummary($('#results'));
   playLogicAnimation();
-  $('#restart').focus();
+  focusReportTop('#results', '#results-title');
 }
 
 function render() {
