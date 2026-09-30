@@ -45,8 +45,27 @@ const TOPICS = { local: 'Local life', climate: 'Climate', government: 'Governmen
 const CHOICES = [['human', 'Human'], ['ai', 'AI'], ['verified', 'Human + AI', 'Verified automation']];
 const TOTAL_TASKS = DESKS.reduce((sum, desk) => sum + desk.tasks.length, 0);
 const TASKS_PER_DAY = TOTAL_TASKS * 3;
-const state = { day: 1, stories: [], activeId: 1, nextId: 1, nextTemplate: 0, logs: [], dailyResults: [], repeatVisitors: 0, totalTraffic: 0 };
+const STORAGE_KEY = 'ai-news-game-save-v1';
+const state = { day: 1, stories: [], activeId: 1, nextId: 1, nextTemplate: 0, logs: [], dailyResults: [], repeatVisitors: 0, totalTraffic: 0, phase: 'assigning' };
 const $ = selector => document.querySelector(selector);
+
+function readSavedGame() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!saved || saved.version !== 1 || !saved.state || !Array.isArray(saved.state.stories) || !Array.isArray(saved.state.dailyResults)) return null;
+    return saved.state;
+  } catch (error) {
+    return null;
+  }
+}
+
+function saveGame() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, state })); } catch (error) { /* The game remains playable when local storage is unavailable. */ }
+}
+
+function clearSavedGame() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch (error) { /* Nothing to clear. */ }
+}
 
 function focusReportTop(dialogSelector, titleSelector) {
   requestAnimationFrame(() => {
@@ -74,13 +93,15 @@ function makeStory() {
   };
 }
 function newDay() {
+  state.phase = 'assigning';
   state.stories = [makeStory(), makeStory(), makeStory()];
   state.activeId = state.stories[0].id;
   addLog(`Day ${state.day} begins`, 'Three stories are ready for newsroom assignments.');
   render();
 }
 function reset() {
-  Object.assign(state, { day: 1, stories: [], activeId: 1, nextId: 1, nextTemplate: 0, logs: [], dailyResults: [], repeatVisitors: 0, totalTraffic: 0 });
+  clearSavedGame();
+  Object.assign(state, { day: 1, stories: [], activeId: 1, nextId: 1, nextTemplate: 0, logs: [], dailyResults: [], repeatVisitors: 0, totalTraffic: 0, phase: 'assigning' });
   newDay();
 }
 function activeStory() { return state.stories.find(story => story.id === state.activeId) || state.stories[0]; }
@@ -160,12 +181,14 @@ function calculateDay() {
 }
 
 function finishDay() {
-  if (allDayAssignments().some(choice => !choice)) return;
+  if (state.phase !== 'assigning' || allDayAssignments().some(choice => !choice)) return;
   const result = calculateDay();
   state.dailyResults.push(result);
   state.totalTraffic += result.traffic;
   state.repeatVisitors += result.repeat;
+  state.phase = 'day-summary';
   addLog(`Day ${result.day} report`, `${result.traffic} traffic · ${result.repeat} repeat visitors`, result.day);
+  saveGame();
   showDaySummary(result);
 }
 
@@ -297,10 +320,11 @@ function showDaySummary(result, review = false) {
 }
 
 function showFinalSummary() {
+  state.phase = 'final';
   const subscribers = Math.floor(state.repeatVisitors / 3);
   const remainingRepeat = state.repeatVisitors % 3;
-  const uniqueVisitors = state.dailyResults.reduce((sum, day) => sum + day.oneTime, 0);
-  const audienceTotal = Math.max(1, uniqueVisitors + remainingRepeat + subscribers);
+  const oneTimeVisitors = state.dailyResults.reduce((sum, day) => sum + day.oneTime, 0);
+  const audienceTotal = Math.max(1, oneTimeVisitors + remainingRepeat + subscribers);
   const finalScore = state.totalTraffic + remainingRepeat * 2 + subscribers * 6;
   const averageReach = Math.round(state.dailyResults.reduce((sum, day) => sum + day.reach, 0) / state.dailyResults.length);
   const averageTrust = Math.round(state.dailyResults.reduce((sum, day) => sum + day.trust, 0) / state.dailyResults.length);
@@ -321,16 +345,16 @@ function showFinalSummary() {
   $('#logic-animation').innerHTML = `
     <div class="logic-step"><span class="logic-number">1</span><div class="logic-copy"><strong>You allocated newsroom work</strong><p>Every task assigned to Human, AI, or Human + AI contributed to the day’s tradeoff.</p><div class="logic-values"><span><b data-logic-count="${totals.human}">${totals.human}</b> Human</span><span><b data-logic-count="${totals.ai}">${totals.ai}</b> AI</span><span><b data-logic-count="${totals.verified}">${totals.verified}</b> Human + AI</span></div></div></div>
     <div class="logic-step"><span class="logic-number">2</span><div class="logic-copy"><strong>Those choices produced reach and trust</strong><p>AI emphasized reach, Human emphasized trust, and Human + AI balanced the two effects.</p><div class="logic-values"><span><b data-logic-count="${averageReach}">${averageReach}</b> average reach</span><span><b data-logic-count="${averageTrust}">${averageTrust}</b> average trust</span></div></div></div>
-    <div class="logic-step"><span class="logic-number">3</span><div class="logic-copy"><strong>Reach attracted readers; trust kept them</strong><p>Reach generated traffic. Trust determined how much of that audience returned.</p><div class="logic-values"><span><b data-logic-count="${state.totalTraffic}">${state.totalTraffic}</b> total traffic</span><span><b data-logic-count="${uniqueVisitors}">${uniqueVisitors}</b> unique</span><span><b data-logic-count="${state.repeatVisitors}">${state.repeatVisitors}</b> repeat</span></div></div></div>
+    <div class="logic-step"><span class="logic-number">3</span><div class="logic-copy"><strong>Reach attracted readers; trust kept them</strong><p>Reach generated traffic. Trust determined how much of that audience returned.</p><div class="logic-values"><span><b data-logic-count="${state.totalTraffic}">${state.totalTraffic}</b> total traffic</span><span><b data-logic-count="${oneTimeVisitors}">${oneTimeVisitors}</b> one-time</span><span><b data-logic-count="${state.repeatVisitors}">${state.repeatVisitors}</b> repeat</span></div></div></div>
     <div class="logic-step"><span class="logic-number">4</span><div class="logic-copy"><strong>Retention created subscribers and score</strong><p>Every three repeat visitors became one subscriber. Traffic and retained audience then contributed to the final score.</p><div class="logic-values"><span><b data-logic-count="${subscribers}">${subscribers}</b> subscribers</span><span><b data-logic-count="${remainingRepeat}">${remainingRepeat}</b> repeat left</span><span><b data-logic-count="${finalScore}">${finalScore}</b> final score</span></div></div></div>`;
   $('#final-audience-breakdown').innerHTML = `<div class="audience-breakdown" aria-label="Final audience breakdown">
     <div class="audience-breakdown-cards">
-      <div class="audience-category unique"><span><i class="swatch" aria-hidden="true"></i>Unique visitors</span><strong data-count="${uniqueVisitors}">0</strong></div>
+      <div class="audience-category unique"><span><i class="swatch" aria-hidden="true"></i>One-time visitors</span><strong data-count="${oneTimeVisitors}">0</strong></div>
       <div class="audience-category repeat"><span><i class="swatch" aria-hidden="true"></i>Repeat visitors</span><strong data-count="${remainingRepeat}">0</strong></div>
       <div class="audience-category subscriber"><span><i class="swatch" aria-hidden="true"></i>Subscribers</span><strong data-count="${subscribers}">0</strong></div>
     </div>
     <div class="audience-stack" aria-hidden="true">
-      <span class="unique" data-width="${uniqueVisitors / audienceTotal * 100}"></span>
+      <span class="unique" data-width="${oneTimeVisitors / audienceTotal * 100}"></span>
       <span class="repeat" data-width="${remainingRepeat / audienceTotal * 100}"></span>
       <span class="subscriber" data-width="${subscribers / audienceTotal * 100}"></span>
     </div>
@@ -340,11 +364,12 @@ function showFinalSummary() {
     <div class="metric" style="animation-delay:70ms"><span>Repeat visitors left</span><strong data-count="${remainingRepeat}">0</strong></div>
     <div class="metric" style="animation-delay:140ms"><span>Subscribers</span><strong data-count="${subscribers}">0</strong></div>
     <div class="metric" style="animation-delay:210ms"><span>Final score</span><strong data-count="${finalScore}">0</strong></div>`;
-  $('#reflection').innerHTML = `Across the three days, <strong>${uniqueVisitors} unique visitors</strong> did not return and you retained <strong>${state.repeatVisitors} repeat visitors</strong>. Every three repeat visitors became one subscriber, producing <strong>${subscribers} subscribers</strong> and leaving <strong>${remainingRepeat} repeat visitors</strong>. Your <strong>final score was ${finalScore}</strong>: traffic + (2 × remaining repeat visitors) + (6 × subscribers).`;
+  $('#reflection').innerHTML = `Across the three days, <strong>${oneTimeVisitors} one-time visitors</strong> did not return and you retained <strong>${state.repeatVisitors} repeat visits</strong>. Every three repeat visits became one subscriber, producing <strong>${subscribers} subscribers</strong> and leaving <strong>${remainingRepeat} repeat visits</strong>. Your <strong>final score was ${finalScore}</strong>: traffic + (2 × remaining repeat visits) + (6 × subscribers).`;
   $('#results').classList.remove('hidden');
   animateSummary($('#results'));
   playLogicAnimation();
   focusReportTop('#results', '#results-title');
+  saveGame();
 }
 
 function render() {
@@ -384,6 +409,7 @@ function render() {
   $('#log').innerHTML = state.logs.map(item => item.reportDay
     ? `<div class="log-item"><button type="button" class="log-button" data-report-day="${item.reportDay}"><strong>${item.title}</strong><span>${item.detail}</span></button></div>`
     : `<div class="log-item"><strong>${item.title}</strong><span>${item.detail}</span></div>`).join('');
+  saveGame();
 }
 
 $('#stories').addEventListener('click', event => {
@@ -410,3 +436,27 @@ $('#log').addEventListener('click', event => {
 $('#restart').addEventListener('click', () => { $('#results').classList.add('hidden'); reset(); });
 $('#replay-logic').addEventListener('click', playLogicAnimation);
 $('#start').addEventListener('click', () => { $('#intro').classList.add('hidden'); reset(); });
+
+const savedGame = readSavedGame();
+if (savedGame) $('#resume').classList.remove('hidden');
+
+$('#resume').addEventListener('click', () => {
+  const saved = readSavedGame();
+  if (!saved) return;
+  Object.assign(state, saved);
+  $('#intro').classList.add('hidden');
+  render();
+  if (state.phase === 'day-summary' && state.dailyResults.length) showDaySummary(state.dailyResults[state.dailyResults.length - 1]);
+  else if (state.phase === 'final' && state.dailyResults.length === 3) showFinalSummary();
+});
+
+let helpReturnFocus = null;
+$('#open-help').addEventListener('click', () => {
+  helpReturnFocus = document.activeElement;
+  $('#help').classList.remove('hidden');
+  focusReportTop('#help', '#help-title');
+});
+$('#close-help').addEventListener('click', () => {
+  $('#help').classList.add('hidden');
+  if (helpReturnFocus) helpReturnFocus.focus();
+});

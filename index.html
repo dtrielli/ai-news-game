@@ -42,6 +42,9 @@
       border-bottom: 3px solid var(--ink);
     }
 
+    .header-actions { display: flex; gap: 8px; align-items: stretch; }
+    .help-button { border: 1px solid var(--ink); border-radius: 8px; padding: 8px 13px; background: transparent; color: var(--ink); cursor: pointer; font-weight: 850; }
+
     h1 { margin: 0; font-family: Georgia, serif; font-size: clamp(1.8rem, 4vw, 3.2rem); line-height: .95; }
     h2 { margin: 0 0 12px; font: 800 1rem/1.1 system-ui; letter-spacing: .08em; text-transform: uppercase; }
     h3 { margin: 0; font-size: 1.02rem; line-height: 1.25; }
@@ -53,7 +56,8 @@
       display: grid;
       grid-template-columns: repeat(3, minmax(110px, 1fr));
       gap: 8px;
-      width: min(700px, 65vw);
+      flex: 1;
+      width: min(700px, 100%);
     }
 
     .metric { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
@@ -69,6 +73,14 @@
     .project-footer { margin-top: 16px; padding: 15px 2px 4px; border-top: 1px solid var(--line); color: var(--muted); font-size: .74rem; line-height: 1.5; }
     .project-footer p + p { margin-top: 4px; }
     .project-footer a { color: var(--blue); }
+    .privacy-note { padding: 10px; border-left: 4px solid var(--blue); background: #edf6fa; color: var(--ink) !important; font-size: .82rem; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 22px; }
+    .button-row .primary { margin-top: 0; }
+    .button-row .secondary { padding-inline: 18px; }
+    .feedback-list { padding-left: 1.2rem; color: var(--muted); }
+    .feedback-list li + li { margin-top: 5px; }
+    .text-link { color: var(--blue); font-weight: 800; }
+    .startup-error { margin-top: 14px; padding: 12px; border: 2px solid var(--red); border-radius: 8px; background: #fff0ed; color: var(--ink); }
 
     .reader-list, .story-list, .log { display: grid; gap: 9px; }
     .reader-list { max-height: 61vh; overflow: auto; }
@@ -238,6 +250,7 @@
     @media (max-width: 950px) {
       header { align-items: flex-start; flex-direction: column; }
       .status { width: 100%; overflow-x: auto; }
+      .header-actions, .help-button { width: 100%; }
       main { grid-template-columns: 1fr; }
       .panel:last-child { grid-column: 1 / -1; min-height: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     }
@@ -275,7 +288,6 @@
   <div class="shell">
     <header>
       <div>
-        <div class="kicker">AI News Game</div>
         <h1>AI News Game</h1>
       </div>
       <div class="status" aria-label="Game status">
@@ -283,6 +295,7 @@
         <div class="metric"><span>Tasks assigned</span><strong id="assigned">0/20</strong></div>
         <div class="metric"><span>Retained audience</span><strong id="retained">0</strong></div>
       </div>
+      <div class="header-actions"><button type="button" class="help-button" id="open-help">How to play</button></div>
     </header>
 
     <main>
@@ -309,7 +322,7 @@
     </main>
     <footer class="project-footer">
       <p><strong>AI News Game</strong> is a research and educational project developed by Daniel Trielli at the University of Maryland’s Philip Merrill College of Journalism. Supported by the Lucy Dalglish Faculty Fund for Media &amp; Democracy.</p>
-      <p>© 2026 Daniel Trielli. The views expressed through this project do not necessarily represent the University of Maryland. This version does not collect or transmit player data. Contact: <a href="mailto:dtrielli@umd.edu">dtrielli@umd.edu</a>.</p>
+      <p>© 2026 Daniel Trielli. All rights reserved. The views expressed through this project do not necessarily represent the University of Maryland. This version does not collect or transmit player data. Contact: <a href="mailto:dtrielli@umd.edu">dtrielli@umd.edu</a>.</p>
     </footer>
   </div>
 
@@ -319,14 +332,27 @@
       <h2 id="intro-title">Decide how the news gets made.</h2>
       <p>For every story, complete the tasks at the Reporting, Editing, Packaging, and Audience desks.</p>
       <p>Assign each task to Human, AI, or Human + AI (verified automation). There is no clock, and every choice can be revised before publication.</p>
-      <button class="primary" id="start">Enter the newsroom</button>
+      <p class="privacy-note">Your progress is saved only in this browser so you can resume later. Nothing is transmitted or collected.</p>
+      <div class="startup-error hidden" id="startup-error" role="alert"></div>
+      <div class="button-row"><button class="primary" id="start">Start a new game</button><button class="secondary hidden" id="resume">Resume saved game</button></div>
+    </div>
+  </div>
+
+  <div class="results hidden" id="help" role="dialog" aria-modal="true" aria-labelledby="help-title">
+    <div class="modal">
+      <div class="kicker">Instructions and scoring</div>
+      <h2 id="help-title" tabindex="-1">How to play</h2>
+      <p>Across three days, assign all 20 newsroom tasks for each of three stories. Choose Human, AI, or Human + AI. You may revise any assignment until you finish the day.</p>
+      <section class="report-section"><h3>What your choices do</h3><p>In this playtest build, Human assignments emphasize trust, AI assignments emphasize reach, and Human + AI balances the two. Reach affects traffic; trust affects how many readers return. Every three returning readers become one subscriber.</p></section>
+      <section class="report-section"><h3>About the scoring model</h3><p>The numerical effects are provisional game rules for playtesting. They are not empirical claims about the performance of people or AI. The final score combines traffic, repeat visitors, and subscribers.</p></section>
+      <button class="primary" id="close-help">Return to the game</button>
     </div>
   </div>
 
   <div class="results hidden" id="day-summary" role="dialog" aria-modal="true" aria-labelledby="day-summary-title">
     <div class="modal">
       <div class="kicker" id="day-summary-kicker">Day complete</div>
-      <h2 id="day-summary-title" tabindex="-1">End of the day report</h2>
+      <h2 id="day-summary-title" tabindex="-1">Today’s newsroom choices</h2>
       <section class="report-section" aria-labelledby="editorial-choices-title">
         <h3 id="editorial-choices-title">Your editorial choices</h3>
         <div class="result-grid allocation-grid" id="day-summary-grid"></div>
@@ -367,11 +393,18 @@
         <div class="result-grid" id="result-grid"></div>
         <p class="report-explanation" id="reflection"></p>
       </section>
+      <section class="report-section" aria-labelledby="tester-feedback-title">
+        <h3 id="tester-feedback-title">Help improve the game</h3>
+        <p>As you reflect on the playtest, consider:</p>
+        <ul class="feedback-list"><li>Were the choices and their consequences clear?</li><li>Did the tradeoffs feel meaningful?</li><li>What felt repetitive, confusing, or missing?</li></ul>
+        <p><a class="text-link" href="mailto:dtrielli@umd.edu?subject=AI%20News%20Game%20playtest%20feedback">Send playtest feedback</a></p>
+      </section>
       <button class="primary" id="restart">Play again</button>
     </div>
   </div>
 
   <div class="sr-only" id="announcer" aria-live="assertive"></div>
+  <noscript><p class="startup-error">This game requires JavaScript. Enable JavaScript and reload the page.</p></noscript>
 
   <script type="text/plain" id="legacy-timed-prototype">
     'use strict';
@@ -688,9 +721,17 @@
       requestAnimationFrame(tick);
     });
   </script>
+  <script>
+    window.addEventListener('error', function () {
+      var box = document.getElementById('startup-error');
+      if (!box) return;
+      box.textContent = 'The game could not load its configuration files. Make sure the entire folder—including the data folder—was uploaded, then reload the page.';
+      box.classList.remove('hidden');
+    });
+  </script>
   <script src="data/scenarios.js"></script>
   <script src="data/round-events.js"></script>
   <script src="data/resource-rules.js"></script>
-  <script src="app.js?v=research-footer-1.5"></script>
+  <script src="app.js?v=playtest-ready-1.6"></script>
 </body>
 </html>

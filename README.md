@@ -1,6 +1,6 @@
 # AI News Game
 
-**Current build: Research Footer 1.5**
+**Current build: Playtest Ready 1.6**
 
 A barebones digital prototype of the AI News Game. It closely follows the current tabletop board: Reporting, Editing, Packaging, and Audience desks, each containing five tasks.
 
@@ -27,6 +27,8 @@ GitHub will provide a public URL after the first deployment finishes.
 - Desk-level controls for assigning all five tasks at once
 - Choices can be revised until the day is completed
 - Provisional readership effects: traffic, one-time visitors, repeat visitors, and subscribers
+- A reopenable How to Play panel that explains the provisional scoring model
+- Browser-only autosave with an option to resume an unfinished game
 - Animated reach, trust, traffic, and retention summaries
 - Rules-based explanations of editorial choices and readership effects
 - Final report embeds rules-based explanations of strategy, readership change, retention, subscriber conversion, and scoring
@@ -53,13 +55,23 @@ Resource use is calculated separately from assignment labels: Human uses one Hum
 - Previous day reports can be reopened from the newsroom log
 - Story tabs appear above and below the board with clear incomplete/complete status badges
 - Final three-day score using the tabletop board's displayed scoring structure
-- Three-column allocation summaries and an animated final breakdown of unique visitors, repeat visitors, and subscribers
+- Three-column allocation summaries and an animated final breakdown of one-time visitors, repeat visitors, and subscribers
 - Replayable final animation explaining assignments → reach/trust → traffic/retention → subscribers/score
 - Replay visibly dims, reveals, highlights, and counts up each explanatory step in sequence
 - Authorship, copyright, UMD affiliation, funding, non-endorsement, contact, and no-data-collection notice
 - Day and final reports reset to their headings instead of opening scrolled to the bottom
 - Responsive layout and keyboard-accessible controls
+- Playtest prompts and a direct email feedback link in the final report
+- A visible loading error if required configuration files are missing
 
 ## Important limitation
 
 The numerical effects are placeholders for playtesting, not empirical claims about human or AI performance. The next design phase should test whether players can understand the consequences of their choices and whether the simulation supports the intended classroom discussion.
+
+## Privacy and saved progress
+
+This version does not collect or transmit player data. Progress is saved only in the player’s browser using local storage so an unfinished game can be resumed. Starting a new game replaces the saved progress.
+
+## License
+
+Copyright © 2026 Daniel Trielli. All rights reserved. See `LICENSE.md` for the playtest-use terms.
