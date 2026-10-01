@@ -2,8 +2,9 @@
  * AI News Game scenario catalog
  *
  * Edit this file to add or revise stories without changing the game interface.
- * Story-type and scenario modifiers are neutral for now. Future versions can
- * apply these values to reach and trust when AI or Human + AI is selected.
+ * Story types define how suitable AI use is for particular newsroom tasks.
+ * Ratings: 2 = strong fit, 1 = useful, 0 = neutral, -1 = caution,
+ * -2 = high-stakes AI use. Human assignments are not modified.
  */
 window.AI_NEWS_SCENARIO_DATA = {
   schemaVersion: 1,
@@ -11,34 +12,42 @@ window.AI_NEWS_SCENARIO_DATA = {
   storyTypes: {
     breaking_news: {
       label: 'Breaking news',
-      description: 'Fast-developing coverage in which timeliness is unusually important.',
-      aiUseModifiers: {
-        ai: { reach: 0, trust: 0 },
-        verified: { reach: 0, trust: 0 }
+      description: 'For this type of story, speed and reach are key—but errors can quickly damage trust.',
+      taskFit: {
+        'Story Summarization': 2, 'Format Adaptation': 2, 'Search Optimization': 2, 'Social Distribution': 2,
+        'Headline Writing': 1, 'Story Promotion': 1, 'Audience Targeting': 1, 'Performance Analysis': 1,
+        'Interview Processing': -1, 'News Writing': -1, 'Visual Creation': -1,
+        'Fact Checking': -2, 'Bias & Fairness Review': -2, 'Content Selection': -2
       }
     },
     public_service: {
       label: 'Public-service reporting',
-      description: 'Information that helps audiences make immediate or practical decisions.',
-      aiUseModifiers: {
-        ai: { reach: 0, trust: 0 },
-        verified: { reach: 0, trust: 0 }
+      description: 'For this type of story, accuracy, accessibility, and reach are key; audiences primarily need useful information quickly and clearly.',
+      taskFit: {
+        'Story Summarization': 2, 'Format Adaptation': 2, 'Search Optimization': 2, 'Social Distribution': 2,
+        'Document Review': 1, 'Data Gathering & Analysis': 1, 'Audience Targeting': 1, 'Performance Analysis': 1,
+        'News Writing': -1, 'Headline Writing': -1, 'Visual Creation': -1, 'Story Promotion': -1,
+        'Fact Checking': -2, 'Content Selection': -2
       }
     },
     accountability: {
       label: 'Accountability reporting',
-      description: 'Coverage that scrutinizes institutions, records, decisions, or public power.',
-      aiUseModifiers: {
-        ai: { reach: 0, trust: 0 },
-        verified: { reach: 0, trust: 0 }
+      description: 'For this type of story, verification, fairness, and defensible conclusions are key; speed and scale matter less than careful judgment.',
+      taskFit: {
+        'Document Review': 2, 'Data Gathering & Analysis': 2,
+        'Interview Processing': 1, 'Story Summarization': 1, 'Search Optimization': 1, 'Performance Analysis': 1,
+        'Research & Source Discovery': -1, 'News Writing': -1, 'Headline Writing': -1, 'Audience Targeting': -1,
+        'Fact Checking': -2, 'Bias & Fairness Review': -2, 'Content Selection': -2, 'Visual Creation': -2
       }
     },
     community: {
       label: 'Community reporting',
-      description: 'Coverage of local institutions, services, and community life.',
-      aiUseModifiers: {
-        ai: { reach: 0, trust: 0 },
-        verified: { reach: 0, trust: 0 }
+      description: 'For this type of story, local context, relationships, and representation are key; audiences expect a strong human connection.',
+      taskFit: {
+        'Format Adaptation': 2, 'Performance Analysis': 2,
+        'Interview Processing': 1, 'Story Summarization': 1, 'Search Optimization': 1,
+        'Research & Source Discovery': -1, 'News Writing': -1, 'Headline Writing': -1, 'Audience Targeting': -1,
+        'Bias & Fairness Review': -2, 'Content Selection': -2, 'Community Management': -2
       }
     }
   },

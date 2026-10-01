@@ -93,6 +93,10 @@
 
     .story { background: var(--card); border: 1px solid var(--line); border-radius: 9px; padding: 13px; box-shadow: var(--shadow); }
     .story-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+    .story-labels { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; margin-bottom: 5px; }
+    .story-labels .kicker { margin: 0; }
+    .story-type-badge { padding: 2px 7px; border-radius: 99px; background: var(--ink); color: white; font-size: .65rem; font-weight: 850; }
+    .story-stakes { max-width: 72ch; margin: 5px 0 3px; color: var(--muted); font-size: .78rem; }
     .tag { border: 1px solid currentColor; border-radius: 99px; padding: 2px 7px; color: var(--blue); font-size: .7rem; font-weight: 800; white-space: nowrap; }
     .stage-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin: 12px 0; }
     .stage { padding-top: 6px; border-top: 5px solid #ded9d0; color: var(--muted); font-size: .67rem; font-weight: 800; text-transform: uppercase; }
@@ -134,42 +138,78 @@
     .publish { width: 100%; margin-top: 12px; background: var(--green); color: white; }
     .allocation-list { display: grid; gap: 8px; margin-bottom: 18px; }
     .allocation-item { display: flex; justify-content: space-between; padding: 8px; background: var(--card); border: 1px solid var(--line); border-radius: 7px; }
-    .story-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-bottom: 12px; }
-    .story-tab { text-align: left; border: 1px solid var(--line); border-radius: 8px; background: #e8e2d9; padding: 9px; cursor: pointer; }
+    .story-workspace { display: grid; grid-template-columns: minmax(210px, .72fr) minmax(0, 2fr); gap: 10px; align-items: stretch; }
+    .story-column { display: flex; flex-direction: column; gap: 8px; min-width: 0; background: var(--card); border: 1px solid var(--line); border-radius: 9px; padding: 11px; box-shadow: var(--shadow); }
+    .story-tabs { display: grid; grid-template-columns: 1fr; gap: 7px; }
+    .story-tab { text-align: left; border: 1px solid var(--line); border-radius: 8px; background: #e8e2d9; padding: 8px; cursor: pointer; }
     .story-tab strong, .story-tab span { display: block; }
     .story-tab strong { font-size: .78rem; line-height: 1.2; }
     .story-tab span { margin-top: 4px; color: var(--muted); font-size: .68rem; }
+    .story-tab-labels { display: flex !important; flex-wrap: wrap; gap: 4px; align-items: center; margin: 0 0 5px !important; }
+    .story-tab-labels b { font-size: .58rem; letter-spacing: .08em; text-transform: uppercase; }
+    .story-tab-labels i { padding: 1px 5px; border-radius: 99px; background: var(--ink); color: white; font-size: .55rem; font-style: normal; font-weight: 800; }
+    .story-tab-description { margin-top: 6px !important; font-size: .62rem !important; line-height: 1.3; }
+    .story-tab-progress { font-size: .61rem !important; }
     .story-tab.active { background: var(--ink); color: white; }
     .story-tab.active span { color: #d9e0e6; }
     .story-tab.incomplete { border-left: 5px solid var(--gold); }
     .story-tab.complete { border-left: 5px solid var(--green); }
-    .story-tab-status { display: inline-block !important; width: max-content; margin-top: 7px !important; padding: 2px 6px; border-radius: 99px; font-size: .62rem !important; font-weight: 850; }
+    .story-tab-status { display: inline-block !important; width: max-content; margin-top: 6px !important; padding: 2px 6px; border-radius: 99px; font-size: .58rem !important; font-weight: 900; letter-spacing: .03em; }
     .story-tab.incomplete .story-tab-status { background: #fff0c5; color: #76520d; }
     .story-tab.complete .story-tab-status { background: #d8eee4; color: #155d45; }
     .story-tab.active .story-tab-status { background: white; }
     .story-tab.active.incomplete .story-tab-status { color: #76520d; }
     .story-tab.active.complete .story-tab-status { color: #155d45; }
     .story-tabs-bottom { margin-top: 12px; margin-bottom: 0; padding-top: 12px; border-top: 1px solid var(--line); }
-    .active-story { background: var(--card); border: 1px solid var(--line); border-radius: 9px; padding: 13px; box-shadow: var(--shadow); }
+    .active-story { display: flex; flex-direction: column; min-width: 0; background: var(--card); border: 1px solid var(--line); border-radius: 9px; padding: 11px; box-shadow: var(--shadow); }
     .news-board { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+    .news-board.single-desk { flex: 1; grid-template-columns: 1fr; }
     .desk { border: 1px solid color-mix(in srgb, var(--desk) 45%, white); border-radius: 8px; overflow: hidden; background: color-mix(in srgb, var(--desk) 6%, white); }
-    .desk-head { display: flex; gap: 8px; align-items: center; padding: 9px; color: white; background: var(--desk); }
-    .desk-head > span { display: grid; place-items: center; flex: 0 0 27px; height: 27px; border-radius: 50%; background: white; color: var(--desk); font-weight: 900; }
+    .active-desk-panel { display: flex; flex-direction: column; min-height: 100%; }
+    .desk-head { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(270px, .9fr); gap: 12px; align-items: center; padding: 8px 9px; color: white; background: var(--desk); }
+    .desk-head-title { display: flex; gap: 8px; align-items: center; min-width: 0; }
+    .desk-head-title > span { display: grid; place-items: center; flex: 0 0 27px; height: 27px; border-radius: 50%; background: white; color: var(--desk); font-weight: 900; }
     .desk-head h3 { text-transform: uppercase; font-size: .82rem; }
     .desk-head p { font-size: .67rem; opacity: .9; }
-    .board-task { padding: 8px; border-bottom: 1px solid color-mix(in srgb, var(--desk) 20%, white); }
+    .board-task { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(270px, .9fr); gap: 12px; align-items: center; padding: 7px 9px; border-bottom: 1px solid color-mix(in srgb, var(--desk) 20%, white); }
     .board-task:last-child { border-bottom: 0; }
-    .board-task-copy strong, .board-task-copy span { display: block; }
-    .board-task-copy strong { font-size: .75rem; }
-    .board-task-copy span { min-height: 2.2em; color: var(--muted); font-size: .66rem; }
-    .board-choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; margin-top: 6px; }
-    .board-choices button { min-width: 0; border: 1px solid var(--desk); border-radius: 5px; padding: 6px 3px; background: white; color: var(--desk); cursor: pointer; font-size: .67rem; font-weight: 850; }
+    .board-task-copy { font-size: .7rem; line-height: 1.35; }
+    .board-task-copy strong { font-size: .72rem; }
+    .board-task-copy span { color: var(--muted); }
+    .board-choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+    .board-choices button { position: relative; min-width: 0; border: 1px solid var(--desk); border-radius: 5px; padding: 6px 5px; background: white; color: var(--desk); cursor: pointer; font-size: .67rem; font-weight: 850; }
     .board-choices button span, .board-choices button small { display: block; }
     .board-choices button small { font-size: .54rem; font-weight: 650; }
     .board-choices button.selected { background: var(--desk); color: white; }
-    .desk-bulk { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 7px; background: white; border-bottom: 1px solid color-mix(in srgb, var(--desk) 20%, white); }
-    .desk-bulk button { min-width: 0; border: 1px dashed var(--desk); border-radius: 5px; padding: 6px 3px; background: white; color: var(--desk); cursor: pointer; font-size: .61rem; font-weight: 850; }
-    .desk-bulk button small { display: block; font-size: .5rem; }
+    .desk-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 12px; }
+    .desk-tab { min-width: 0; padding: 8px; border: 1px solid var(--line); border-top: 4px solid var(--desk); border-radius: 7px; background: white; color: var(--ink); cursor: pointer; text-align: left; }
+    .desk-tab strong, .desk-tab span { display: block; }
+    .desk-tab strong { font-size: .72rem; }
+    .desk-tab-status { width: max-content; margin-top: 5px !important; padding: 2px 5px; border-radius: 99px; font-size: .55rem !important; font-weight: 900; letter-spacing: .03em; }
+    .desk-tab.incomplete .desk-tab-status { background: #fff0c5; color: #76520d; }
+    .desk-tab.complete .desk-tab-status { background: #d8eee4; color: #155d45; }
+    .desk-tab.active { background: var(--desk); color: white; }
+    .desk-tab.active .desk-tab-status { background: white; opacity: 1; }
+    .desk-tab.active.incomplete .desk-tab-status { color: #76520d; }
+    .desk-tab.active.complete .desk-tab-status { color: #155d45; }
+    .desk-navigation { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: auto; padding: 10px; border-top: 1px solid color-mix(in srgb, var(--desk) 20%, white); }
+    .desk-navigation .secondary { margin: 0; }
+    .story-outlook { display: grid; grid-template-columns: 88px minmax(180px, 1fr); gap: 5px 12px; align-items: center; margin-top: 11px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
+    .story-outlook > strong { grid-row: 1 / 3; align-self: center; font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
+    .story-outlook > small { grid-column: 2; color: var(--muted); font-size: .62rem; }
+    .outlook-row { display: grid; grid-template-columns: 42px 1fr 26px; gap: 7px; align-items: center; font-size: .68rem; font-weight: 800; }
+    .outlook-row b { text-align: right; font-variant-numeric: tabular-nums; }
+    .outlook-track { height: 8px; overflow: hidden; border-radius: 10px; background: #ded8cf; }
+    .outlook-track > i { display: block; height: 100%; border-radius: inherit; transition: width .3s ease; }
+    .outlook-track .reach { background: var(--blue); }
+    .outlook-track .trust { background: var(--green); }
+    .story-column .story-outlook { grid-template-columns: 1fr; margin-top: auto; padding: 10px; }
+    .story-column .story-outlook > strong, .story-column .story-outlook > small { grid-column: 1; grid-row: auto; }
+    .active-story > .desk-tabs { margin-top: 0; }
+    .desk-bulk-choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+    .desk-head-bulk > small { display: block; margin-bottom: 3px; color: white; font-size: .53rem; font-weight: 850; letter-spacing: .05em; text-transform: uppercase; opacity: .85; }
+    .desk-head-bulk button { min-width: 0; border: 1px solid rgba(255,255,255,.8); border-radius: 5px; padding: 5px 3px; background: rgba(255,255,255,.12); color: white; cursor: pointer; font-size: .59rem; font-weight: 850; }
+    .desk-head-bulk button:hover { background: white; color: var(--desk); }
     .day-action { margin-top: 14px; padding: 14px; border: 2px solid var(--ink); border-radius: 9px; text-align: center; }
     .day-action .primary { width: 100%; margin-top: 8px; }
     .summary-note { margin-top: 14px; padding: 10px; border-left: 4px solid var(--gold); background: #fff7df; color: var(--ink) !important; font-size: .8rem; }
@@ -177,6 +217,11 @@
     .report-section + .report-section { padding-top: 17px; border-top: 1px solid var(--line); }
     .report-section h3 { margin-bottom: 9px; font: 800 1rem/1.2 system-ui; }
     .report-explanation { margin: 10px 0 !important; color: var(--ink) !important; font-size: .9rem; }
+    .driver-box { margin: 10px 0; padding: 10px 12px; border-left: 4px solid var(--blue); background: #edf6fa; color: var(--ink); }
+    .driver-box > strong { font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; }
+    .driver-box ul { margin: 5px 0 0; padding-left: 1.1rem; }
+    .driver-box li { font-size: .82rem; }
+    .driver-box li + li { margin-top: 4px; }
     .impact-viz { margin-top: 16px; padding: 14px; border: 1px solid var(--line); border-radius: 9px; background: var(--paper); }
     .impact-meter { display: grid; grid-template-columns: 55px 1fr 35px; gap: 8px; align-items: center; margin: 7px 0; font-size: .75rem; font-weight: 800; }
     .impact-track { height: 12px; overflow: hidden; border-radius: 20px; background: #ddd7ce; }
@@ -252,6 +297,7 @@
       .status { width: 100%; overflow-x: auto; }
       .header-actions, .help-button { width: 100%; }
       main { grid-template-columns: 1fr; }
+      .story-workspace { grid-template-columns: minmax(190px, .65fr) minmax(0, 1.6fr); }
       .panel:last-child { grid-column: 1 / -1; min-height: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     }
 
@@ -265,7 +311,14 @@
       .assignments button { min-height: 48px; }
       .task-card .assignments { grid-template-columns: 1fr; }
       .story-tabs, .news-board { grid-template-columns: 1fr; }
+      .story-workspace { grid-template-columns: 1fr; }
+      .story-tabs { grid-template-columns: 1fr; }
+      .desk-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .board-choices button { min-height: 46px; }
+      .board-task { grid-template-columns: 1fr; gap: 6px; }
+      .desk-head { grid-template-columns: 1fr; gap: 7px; }
+      .story-outlook { grid-template-columns: 1fr; }
+      .story-outlook > strong, .story-outlook > small { grid-column: 1; grid-row: auto; }
       .result-grid.allocation-grid, .audience-breakdown-cards { grid-template-columns: 1fr; }
     }
 
@@ -301,7 +354,7 @@
     <main>
       <section class="panel" aria-labelledby="stories-title">
         <h2 id="stories-title">Newsroom desk</h2>
-        <p class="tiny" style="margin-bottom:10px">Select a story, then assign any task in any order. Each story keeps its own newsroom plan.</p>
+        <p class="tiny" style="margin-bottom:10px">Select a story on the left, then move through its newsroom desks. Each story keeps its own plan.</p>
         <div class="story-list" id="stories"></div>
       </section>
 
@@ -343,7 +396,8 @@
       <div class="kicker">Instructions and scoring</div>
       <h2 id="help-title" tabindex="-1">How to play</h2>
       <p>Across three days, assign all 20 newsroom tasks for each of three stories. Choose Human, AI, or Human + AI. You may revise any assignment until you finish the day.</p>
-      <section class="report-section"><h3>What your choices do</h3><p>In this playtest build, Human assignments emphasize trust, AI assignments emphasize reach, and Human + AI balances the two. Reach affects traffic; trust affects how many readers return. Every three returning readers become one subscriber.</p></section>
+      <section class="report-section"><h3>What your choices do</h3><p>Human assignments emphasize trust, AI emphasizes reach, and Human + AI adds oversight. Story type makes AI a better or riskier fit for particular tasks. The Story outlook combines your assignments into live reach and trust estimates. Reach attracts readers, while trust helps retain them.</p></section>
+      <section class="report-section"><h3>Moving through the board</h3><p>Use the four desk tabs to move between Reporting, Editing, Packaging, and Audience. Each tab shows whether its five tasks are complete.</p></section>
       <section class="report-section"><h3>About the scoring model</h3><p>The numerical effects are provisional game rules for playtesting. They are not empirical claims about the performance of people or AI. The final score combines traffic, repeat visitors, and subscribers.</p></section>
       <button class="primary" id="close-help">Return to the game</button>
     </div>
@@ -360,7 +414,7 @@
       </section>
       <section class="report-section" aria-labelledby="impact-choices-title">
         <h3 id="impact-choices-title">Impact of your choices</h3>
-        <p class="report-explanation" id="choice-impact-summary"></p>
+        <div class="report-explanation" id="choice-impact-summary"></div>
         <div id="day-impact-container"></div>
         <p class="report-explanation" id="readership-summary"></p>
       </section>
@@ -732,6 +786,6 @@
   <script src="data/scenarios.js"></script>
   <script src="data/round-events.js"></script>
   <script src="data/resource-rules.js"></script>
-  <script src="app.js?v=playtest-ready-1.6"></script>
+  <script src="app.js?v=aligned-content-1.14"></script>
 </body>
 </html>

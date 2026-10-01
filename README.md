@@ -1,6 +1,6 @@
 # AI News Game
 
-**Current build: Playtest Ready 1.6**
+**Current build: Aligned Content 1.14**
 
 A barebones digital prototype of the AI News Game. It closely follows the current tabletop board: Reporting, Editing, Packaging, and Audience desks, each containing five tasks.
 
@@ -22,11 +22,23 @@ GitHub will provide a public URL after the first deployment finishes.
 
 - Three untimed days with a summary after each day
 - Three selectable stories per day, each with its own complete set of assignments
-- Twenty tabletop tasks available simultaneously for each story
+- Twenty tabletop tasks per story, grouped into four compact desk tabs
 - Human, AI, and Human + AI (verified automation) assignments
 - Desk-level controls for assigning all five tasks at once
 - Choices can be revised until the day is completed
 - Provisional readership effects: traffic, one-time visitors, repeat visitors, and subscribers
+- Story types that change the consequences of AI and Human + AI assignments for particular tasks
+- A live story-level reach and trust outlook that collects the effects of every assignment
+- One visible newsroom desk at a time, with compact desk tabs and completion counts
+- Explicit TO DO and COMPLETE markings on every story and desk tab
+- Task titles and definitions presented together on a single compact line
+- A single information-rich story list beside the decision panel, with no repeated story header or bottom story tabs
+- The selected story’s live reach and trust outlook placed directly beneath the story list
+- Matching story and decision panels with aligned edges, padding, borders, and height
+- The active desk fills the decision panel, with navigation and Story outlook anchored to the shared bottom edge
+- Desk-wide assignment controls placed in the colored desk header and aligned with the task-choice columns
+- No per-choice fit markers; players infer priorities from the story-type stakes and observe consequences in the Story outlook
+- Rules-based day reports that surface only the two strongest result drivers
 - A reopenable How to Play panel that explains the provisional scoring model
 - Browser-only autosave with an option to resume an unfinished game
 - Animated reach, trust, traffic, and retention summaries
@@ -37,9 +49,31 @@ GitHub will provide a public URL after the first deployment finishes.
 
 ## Editing story scenarios
 
-Story text is stored separately in `data/scenarios.js`. Each scenario has a stable ID, title, topic, story type, and optional scenario-level modifiers. Story types are defined in the same data file and include neutral placeholders for future AI-use bonuses and penalties.
+Story text is stored separately in `data/scenarios.js`. Each scenario has a stable ID, title, topic, story type, and optional scenario-level modifiers. Story types are defined in the same file and assign AI-suitability ratings to selected newsroom tasks: strong fit, useful, neutral, caution, or high stakes.
 
-The data file contains no gameplay or interface code, and it can be edited without changing `app.js`. It is JavaScript rather than fetched JSON so the downloaded game continues to work when `index.html` is opened directly from a computer.
+The data file contains no interface code and can be edited without changing the page layout. It is JavaScript rather than fetched JSON so the downloaded game continues to work when `index.html` is opened directly from a computer. The ratings adjust AI and Human + AI reach/trust contributions; Human assignments remain the baseline.
+
+## Provisional scoring rubric
+
+Each assignment begins with a base contribution:
+
+| Assignment | Reach | Trust |
+| --- | ---: | ---: |
+| Human | 1 | 3 |
+| AI | 3 | 1 |
+| Human + AI | 2 | 2 |
+
+Story-type fit then modifies AI-assisted assignments:
+
+| Story fit | AI | Human + AI |
+| --- | --- | --- |
+| Strong fit | +1 reach, +1 trust | +1 reach, +1 trust |
+| Useful | +1 reach | +1 reach |
+| Neutral | No change | No change |
+| Caution | −1 trust | No change |
+| High stakes | −2 trust, with a floor of 0 | −1 trust |
+
+Human assignments are not modified. Daily reach and trust are each normalized to 0–100 using the maximum possible contribution for that day’s particular mix of stories and tasks. Traffic is `round(6 + 0.24 × reach)`. Repeat visitors are `round(traffic × trust ÷ 125)`, capped at total traffic. These rules are playtest mechanics, not empirical claims.
 
 ## Editing round events
 
