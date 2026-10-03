@@ -1,6 +1,6 @@
 # AI News Game
 
-**Current build: About Page 1.21**
+**Current build: Website 1.22**
 
 A barebones digital prototype of the AI News Game. It closely follows the current tabletop board: Reporting, Editing, Packaging, and Audience desks, each containing five tasks.
 
@@ -26,7 +26,8 @@ GitHub will provide a public URL after the first deployment finishes.
 - Human, AI, and Human + AI (verified automation) assignments
 - A task-specific workflow explanation appears beneath each task after the player chooses Human, AI, or Human + AI
 - A footer link opens a dedicated About page with the project’s purpose, mechanics, development status, privacy information, and credits
-- The About page includes licensing and classroom-use sections, with a working link to a new print-and-play materials folder
+- The About page includes licensing and classroom-use sections, with a working link to the downloadable pen-and-paper playtest
+- The print-and-play page provides the six-page v7.10 PDF with one player board and 10 facilitator cards
 - The About page identifies the current version and revision date and clearly marks the game as a playtest under active development
 - Educational and training use is permitted with credit under the included playtest license
 - Desk-level controls for assigning all five tasks at once

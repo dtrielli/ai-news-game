@@ -1,10 +1,13 @@
 # AI News Game Print-and-Play Materials
 
-This folder will contain the printable files for the physical editions of the AI News Game.
+This folder contains printable files for the physical editions of the AI News Game.
 
-Planned editions:
+Current edition:
 
-- Cards and chips: player boards, facilitator board, cards, and assignment chips
-- Pen and paper: player boards with annotation space and a facilitator board
+- Pen and paper playtest v7.10: one reusable player board and 10 facilitator cards
 
-The materials are still in development. Add downloadable PDFs to this folder and link them from `index.html` when they are ready for playtesting.
+Planned edition:
+
+- Cards and chips: player boards, facilitator materials, cards, and assignment chips
+
+The materials are still in development. The scoring model and story effects are provisional discussion tools.
