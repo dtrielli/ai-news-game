@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Print-and-Play Materials · AI News Game</title>
+  <style>
+    :root { --ink:#17212b; --muted:#5d6975; --paper:#f4f1ea; --card:#fffefa; --line:#d7d0c5; --blue:#236b8e; --shadow:0 7px 24px rgba(35,33,28,.08); }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    a { color: var(--blue); }
+    a:focus-visible { outline: 3px solid #111; outline-offset: 3px; }
+    .shell { width: min(760px, 100%); margin: auto; padding: 22px 18px 40px; }
+    header { display: flex; justify-content: space-between; gap: 20px; align-items: flex-end; padding-bottom: 18px; border-bottom: 3px solid var(--ink); }
+    .kicker { margin: 0 0 5px; color: var(--muted); font-size: .78rem; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { margin: 0; font: 700 clamp(2rem, 7vw, 3.4rem)/.98 Georgia, serif; }
+    .back { flex: 0 0 auto; border: 1px solid var(--ink); border-radius: 8px; padding: 8px 13px; color: var(--ink); font-weight: 850; text-decoration: none; }
+    main { margin-top: 16px; padding: clamp(20px, 5vw, 34px); border: 1px solid var(--line); border-radius: 11px; background: var(--card); box-shadow: var(--shadow); }
+    h2 { margin: 25px 0 8px; font-size: 1rem; letter-spacing: .06em; text-transform: uppercase; }
+    h2:first-child { margin-top: 0; }
+    p { margin: 0; }
+    p + p { margin-top: 10px; }
+    .status { display: inline-block; margin-top: 14px; padding: 5px 9px; border-radius: 99px; background: var(--ink); color: white; font-size: .72rem; font-weight: 850; letter-spacing: .05em; text-transform: uppercase; }
+    .materials { margin: 10px 0 0; padding-left: 1.2rem; color: var(--muted); }
+    .materials li + li { margin-top: 5px; }
+    footer { margin-top: 18px; color: var(--muted); font-size: .75rem; }
+    @media (max-width: 600px) { header { display: grid; align-items: start; } .back { width: max-content; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div><p class="kicker">AI News Game</p><h1>Print-and-play materials</h1></div>
+      <a class="back" href="../about.html">Return to About</a>
+    </header>
+    <main>
+      <h2>In development</h2>
+      <p>The physical edition of the AI News Game is being revised to reflect the structure and visual language of the digital game.</p>
+      <span class="status">Materials coming later</span>
+
+      <h2>Planned versions</h2>
+      <ul class="materials">
+        <li><strong>Cards and chips:</strong> player boards, a facilitator board, cards, and assignment chips.</li>
+        <li><strong>Pen and paper:</strong> printable player boards with annotation space and a facilitator board.</li>
+      </ul>
+
+      <h2>Downloads</h2>
+      <p>Links to printable PDF materials will appear here when the next physical edition is ready for playtesting.</p>
+    </main>
+    <footer>© 2026 Daniel Trielli. All rights reserved.</footer>
+  </div>
+</body>
+</html>

@@ -44,16 +44,118 @@ if (!RESOURCE_RULES || !RESOURCE_RULES.assignmentCosts || !RESOURCE_RULES.defaul
 const TOPICS = { local: 'Local life', climate: 'Climate', government: 'Government', health: 'Public health', schools: 'Schools' };
 const CHOICES = [['human', 'Human'], ['ai', 'AI'], ['verified', 'Human + AI', 'Verified automation']];
 const BASE_EFFECTS = { human: { reach: 1, trust: 3 }, ai: { reach: 3, trust: 1 }, verified: { reach: 2, trust: 2 } };
+const TASK_EXPLAINERS = {
+  'Research & Source Discovery': {
+    human: 'A journalist finds background, documents, experts, and sources.',
+    ai: 'AI identifies background, documents, experts, and sources automatically.',
+    verified: 'AI identifies possible material, and a journalist reviews and selects the sources.'
+  },
+  'Interview Processing': {
+    human: 'A journalist conducts, transcribes, summarizes, and organizes the interviews.',
+    ai: 'AI transcribes, summarizes, and organizes the interview material automatically.',
+    verified: 'AI processes the interviews, and a journalist checks the transcript and summary.'
+  },
+  'Document Review': {
+    human: 'A journalist reads the documents and identifies relevant evidence.',
+    ai: 'AI reviews the documents and extracts relevant evidence automatically.',
+    verified: 'AI extracts possible evidence, and a journalist checks it against the documents.'
+  },
+  'Data Gathering & Analysis': {
+    human: 'A journalist gathers the data and analyzes it for patterns and insights.',
+    ai: 'AI gathers, organizes, and analyzes the data automatically.',
+    verified: 'AI analyzes the data, and a journalist reviews the methods and findings.'
+  },
+  'News Writing': {
+    human: 'A journalist writes the story from the gathered information.',
+    ai: 'AI drafts the story automatically from the gathered information.',
+    verified: 'AI produces a draft, and a journalist reviews and revises it.'
+  },
+  'Editorial Planning': {
+    human: 'Editors set priorities and decide how newsroom resources are allocated.',
+    ai: 'AI recommends priorities and resource allocations automatically.',
+    verified: 'AI recommends a plan, and editors review and approve the priorities.'
+  },
+  'Story Editing': {
+    human: 'An editor revises the story for clarity, structure, and readability.',
+    ai: 'AI revises the story for clarity, structure, and readability automatically.',
+    verified: 'AI suggests revisions, and an editor decides which changes to make.'
+  },
+  'Fact Checking': {
+    human: 'A journalist verifies the claims and evidence against original sources.',
+    ai: 'AI checks claims and evidence automatically against available sources.',
+    verified: 'AI flags claims and evidence, and a journalist verifies them against original sources.'
+  },
+  'Bias & Fairness Review': {
+    human: 'An editor assesses the framing, balance, and missing perspectives.',
+    ai: 'AI identifies possible bias, imbalance, and missing perspectives automatically.',
+    verified: 'AI flags possible concerns, and an editor makes the fairness judgment.'
+  },
+  'Content Selection': {
+    human: 'Editors decide what is published, promoted, and given prominence.',
+    ai: 'AI selects what is published, promoted, and given prominence automatically.',
+    verified: 'AI recommends what to feature, and editors make the final selection.'
+  },
+  'Headline Writing': {
+    human: 'A journalist writes the titles and subheads.',
+    ai: 'AI generates the titles and subheads automatically.',
+    verified: 'AI generates options, and a journalist selects and revises the final wording.'
+  },
+  'Story Summarization': {
+    human: 'A journalist writes the previews, abstracts, and key takeaways.',
+    ai: 'AI produces previews, abstracts, and key takeaways automatically.',
+    verified: 'AI produces a summary, and a journalist checks its emphasis and accuracy.'
+  },
+  'Visual Creation': {
+    human: 'A journalist or designer creates the visuals for the story.',
+    ai: 'AI generates the images, graphics, charts, or thumbnails automatically.',
+    verified: 'AI generates visual options, and a journalist or designer reviews and refines them.'
+  },
+  'Format Adaptation': {
+    human: 'A journalist adapts the story for each platform and format.',
+    ai: 'AI adapts the story for different platforms and formats automatically.',
+    verified: 'AI creates platform versions, and a journalist reviews each adaptation.'
+  },
+  'Story Promotion': {
+    human: 'A journalist writes the teasers, captions, and push notifications.',
+    ai: 'AI generates the promotional language automatically.',
+    verified: 'AI generates promotional options, and a journalist selects and revises them.'
+  },
+  'Search Optimization': {
+    human: 'A journalist improves the story’s search terms and discoverability.',
+    ai: 'AI optimizes the story for search automatically.',
+    verified: 'AI recommends search changes, and a journalist reviews them before publication.'
+  },
+  'Social Distribution': {
+    human: 'A journalist publishes and adapts the story for social platforms.',
+    ai: 'AI publishes and adapts the story across social platforms automatically.',
+    verified: 'AI prepares social posts, and a journalist reviews them before distribution.'
+  },
+  'Audience Targeting': {
+    human: 'A journalist decides which audiences should receive the story.',
+    ai: 'AI selects and targets audiences automatically.',
+    verified: 'AI recommends audience segments, and a journalist approves the targeting.'
+  },
+  'Performance Analysis': {
+    human: 'A journalist monitors engagement and interprets audience behavior.',
+    ai: 'AI monitors engagement and analyzes audience behavior automatically.',
+    verified: 'AI identifies performance patterns, and a journalist interprets what they mean.'
+  },
+  'Community Management': {
+    human: 'A journalist manages comments, interactions, and community relationships.',
+    ai: 'AI moderates comments and manages audience interactions automatically.',
+    verified: 'AI handles routine interactions, and a journalist reviews decisions and sensitive exchanges.'
+  }
+};
 const TOTAL_TASKS = DESKS.reduce((sum, desk) => sum + desk.tasks.length, 0);
 const TASKS_PER_DAY = TOTAL_TASKS * 3;
-const STORAGE_KEY = 'ai-news-game-save-v2';
-const state = { day: 1, stories: [], activeId: 1, activeDesk: 0, nextId: 1, nextTemplate: 0, logs: [], dailyResults: [], repeatVisitors: 0, totalTraffic: 0, phase: 'assigning' };
+const STORAGE_KEY = 'ai-news-game-save-v4';
+const state = { day: 1, stories: [], activeId: 1, activeDesk: 0, nextId: 1, nextTemplate: 0, logs: [], dailyResults: [], repeatVisitors: 0, totalTraffic: 0, phase: 'assigning', animateStories: false };
 const $ = selector => document.querySelector(selector);
 
 function readSavedGame() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (!saved || saved.version !== 2 || !saved.state || !Array.isArray(saved.state.stories) || !Array.isArray(saved.state.dailyResults)) return null;
+    if (!saved || saved.version !== 4 || !saved.state || !Array.isArray(saved.state.stories) || !Array.isArray(saved.state.dailyResults)) return null;
     return saved.state;
   } catch (error) {
     return null;
@@ -61,7 +163,7 @@ function readSavedGame() {
 }
 
 function saveGame() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 2, state })); } catch (error) { /* The game remains playable when local storage is unavailable. */ }
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 4, state })); } catch (error) { /* The game remains playable when local storage is unavailable. */ }
 }
 
 function clearSavedGame() {
@@ -96,6 +198,7 @@ function makeStory() {
 function newDay() {
   state.phase = 'assigning';
   state.activeDesk = 0;
+  state.animateStories = true;
   state.stories = [makeStory(), makeStory(), makeStory()];
   state.activeId = state.stories[0].id;
   addLog(`Day ${state.day} begins`, 'Three stories are ready for newsroom assignments.');
@@ -103,7 +206,7 @@ function newDay() {
 }
 function reset() {
   clearSavedGame();
-  Object.assign(state, { day: 1, stories: [], activeId: 1, activeDesk: 0, nextId: 1, nextTemplate: 0, logs: [], dailyResults: [], repeatVisitors: 0, totalTraffic: 0, phase: 'assigning' });
+  Object.assign(state, { day: 1, stories: [], activeId: 1, activeDesk: 0, nextId: 1, nextTemplate: 0, logs: [], dailyResults: [], repeatVisitors: 0, totalTraffic: 0, phase: 'assigning', animateStories: false });
   newDay();
 }
 function activeStory() { return state.stories.find(story => story.id === state.activeId) || state.stories[0]; }
@@ -218,7 +321,20 @@ function calculateDay() {
   let maxReachPoints = 0;
   let maxTrustPoints = 0;
   const driverStats = { fitUses: 0, reachBonus: 0, trustBonus: 0, riskyAI: 0, trustPenalty: 0, oversightUses: 0 };
+  const storyEffects = [];
   state.stories.forEach(story => {
+    const storyEffect = {
+      title: story.title,
+      storyType: story.storyType,
+      typeLabel: storyTypeFor(story).label,
+      bonusAssignments: 0,
+      penaltyAssignments: 0,
+      reachBonus: 0,
+      trustBonus: 0,
+      trustPenalty: 0,
+      bonusDetails: [],
+      penaltyDetails: []
+    };
     DESKS.forEach((desk, deskIndex) => desk.tasks.forEach(([taskName], taskIndex) => {
       const choice = story.assignments[deskIndex][taskIndex];
       allocations[choice]++;
@@ -232,12 +348,24 @@ function calculateDay() {
         driverStats.reachBonus += effect.reach - BASE_EFFECTS[choice].reach;
         driverStats.trustBonus += effect.trust - BASE_EFFECTS[choice].trust;
       }
+      if (choice !== 'human') {
+        const reachDelta = effect.reach - BASE_EFFECTS[choice].reach;
+        const trustDelta = effect.trust - BASE_EFFECTS[choice].trust;
+        if (reachDelta > 0 || trustDelta > 0) storyEffect.bonusAssignments++;
+        if (trustDelta < 0) storyEffect.penaltyAssignments++;
+        storyEffect.reachBonus += Math.max(0, reachDelta);
+        storyEffect.trustBonus += Math.max(0, trustDelta);
+        storyEffect.trustPenalty += Math.max(0, -trustDelta);
+        if (reachDelta > 0 || trustDelta > 0) storyEffect.bonusDetails.push({ taskName, choice, reach: Math.max(0, reachDelta), trust: Math.max(0, trustDelta) });
+        if (trustDelta < 0) storyEffect.penaltyDetails.push({ taskName, choice, trust: Math.max(0, -trustDelta) });
+      }
       if (choice === 'ai' && effect.fit < 0) {
         driverStats.riskyAI++;
         driverStats.trustPenalty += BASE_EFFECTS.ai.trust - effect.trust;
       }
       if (choice === 'verified' && effect.fit < 0) driverStats.oversightUses++;
     }));
+    storyEffects.push(storyEffect);
   });
   const roundEvent = eventForDay(state.day);
   if (roundEvent) {
@@ -252,7 +380,7 @@ function calculateDay() {
   const traffic = Math.round(6 + reach * .24);
   const repeat = Math.min(traffic, Math.round(traffic * trust / 125));
   const oneTime = traffic - repeat;
-  return { day: state.day, allocations, reach, trust, traffic, repeat, oneTime, roundEvent, reachPoints, trustPoints, maxReachPoints, maxTrustPoints, driverStats };
+  return { day: state.day, allocations, reach, trust, traffic, repeat, oneTime, roundEvent, reachPoints, trustPoints, maxReachPoints, maxTrustPoints, driverStats, storyEffects };
 }
 
 function finishDay() {
@@ -332,6 +460,69 @@ function impactDriverSummary(result) {
   return `<div class="driver-box"><strong>What drove this</strong><ul>${drivers.slice(0, 2).map(item => `<li>${item}</li>`).join('')}</ul></div>`;
 }
 
+function storyEffectsSummary(result) {
+  const effects = Array.isArray(result.storyEffects) ? result.storyEffects : [];
+  if (!effects.length) return '';
+  return `<div class="story-effects"><strong>Story-type adjustments</strong>${effects.map(effect => {
+    const bonuses = effect.reachBonus || effect.trustBonus
+      ? `<span class="effect-positive">Bonus: ${effect.reachBonus ? `+${effect.reachBonus} reach` : ''}${effect.reachBonus && effect.trustBonus ? ' · ' : ''}${effect.trustBonus ? `+${effect.trustBonus} trust` : ''}</span>`
+      : '<span class="effect-neutral">No AI-use bonus</span>';
+    const penalty = effect.trustPenalty
+      ? `<span class="effect-negative">Penalty: −${effect.trustPenalty} trust</span>`
+      : '<span class="effect-neutral">No AI-use penalty</span>';
+    return `<div class="story-effect-row"><div class="story-effect-heading"><b>${effect.title}</b><small>${effect.typeLabel}</small></div><div class="story-effect-explanation"><div class="effect-totals">${bonuses}${penalty}</div>${effectReasonList(effect)}</div></div>`;
+  }).join('')}</div>`;
+}
+
+function formatTaskList(tasks) {
+  if (tasks.length <= 1) return tasks[0] || '';
+  if (tasks.length === 2) return `${tasks[0]} and ${tasks[1]}`;
+  return `${tasks.slice(0, -1).join(', ')}, and ${tasks.at(-1)}`;
+}
+
+function groupedEffectDetails(details, kind) {
+  const groups = new Map();
+  (Array.isArray(details) ? details : []).forEach(detail => {
+    const key = kind === 'bonus'
+      ? `${detail.choice}|${detail.reach || 0}|${detail.trust || 0}`
+      : `${detail.choice}|${detail.trust || 0}`;
+    if (!groups.has(key)) groups.set(key, { ...detail, tasks: [] });
+    groups.get(key).tasks.push(detail.taskName);
+  });
+  return [...groups.values()];
+}
+
+function effectReasonList(effect) {
+  const choiceLabels = { ai: 'AI', verified: 'Human + AI' };
+  const bonusLines = groupedEffectDetails(effect.bonusDetails, 'bonus').map(group => {
+    const gains = [group.reach ? `+${group.reach * group.tasks.length} reach` : '', group.trust ? `+${group.trust * group.tasks.length} trust` : ''].filter(Boolean).join(' and ');
+    return `Using <strong>${choiceLabels[group.choice]}</strong> for <strong>${formatTaskList(group.tasks)}</strong> matched this ${effect.typeLabel.toLowerCase()} story and added <strong>${gains}</strong>.`;
+  });
+  const penaltyLines = groupedEffectDetails(effect.penaltyDetails, 'penalty').map(group => `Using <strong>${choiceLabels[group.choice]}</strong> for <strong>${formatTaskList(group.tasks)}</strong> was risk-sensitive for this ${effect.typeLabel.toLowerCase()} story and cost <strong>−${group.trust * group.tasks.length} trust</strong>.`);
+  const lines = [...bonusLines.map(text => ({ type: 'bonus', text })), ...penaltyLines.map(text => ({ type: 'penalty', text }))];
+  if (!lines.length) return '<p class="effect-neutral effect-reason-empty">Your AI-assisted assignments received no story-type bonus or penalty.</p>';
+  return `<ul class="effect-reasons">${lines.map(line => `<li class="${line.type}">${line.text}</li>`).join('')}</ul>`;
+}
+
+function finalStoryEffectsSummary(days) {
+  const rows = days.map(day => {
+    const effects = Array.isArray(day.storyEffects) ? day.storyEffects : [];
+    return effects.reduce((sum, effect) => {
+      sum.reachBonus += effect.reachBonus || 0;
+      sum.trustBonus += effect.trustBonus || 0;
+      sum.trustPenalty += effect.trustPenalty || 0;
+      return sum;
+    }, { day: day.day, reachBonus: 0, trustBonus: 0, trustPenalty: 0, effects });
+  });
+  const total = rows.reduce((sum, row) => {
+    sum.reachBonus += row.reachBonus;
+    sum.trustBonus += row.trustBonus;
+    sum.trustPenalty += row.trustPenalty;
+    return sum;
+  }, { reachBonus: 0, trustBonus: 0, trustPenalty: 0 });
+  return `<div class="effect-rollup">${rows.map(row => `<div><strong>Day ${row.day}</strong><span class="effect-positive">+${row.reachBonus} reach · +${row.trustBonus} trust</span><span class="effect-negative">−${row.trustPenalty} trust</span><details><summary>What caused this?</summary>${row.effects.map(effect => `<div class="rollup-story"><b>${effect.title}</b>${effectReasonList(effect)}</div>`).join('')}</details></div>`).join('')}</div><p class="report-explanation">Across three days, story-type fit added <strong>+${total.reachBonus} reach</strong> and <strong>+${total.trustBonus} trust</strong>, while risk-sensitive AI use cost <strong>−${total.trustPenalty} trust</strong>.</p>`;
+}
+
 function readershipSummary(result) {
   const reachBand = result.reach >= 70 ? 'high' : result.reach >= 45 ? 'medium' : 'low';
   const retentionRate = result.traffic ? result.repeat / result.traffic : 0;
@@ -390,7 +581,7 @@ function showDaySummary(result, review = false) {
     <div class="metric" style="animation-delay:140ms"><span>Human + AI</span><strong data-count="${result.allocations.verified}">0</strong></div>`;
   $('#editorial-summary').innerHTML = editorialSummary(result.allocations);
   $('#choice-impact-summary').innerHTML = impactDriverSummary(result);
-  $('#day-impact-container').innerHTML = `<div class="impact-viz" id="day-impact-viz">
+  $('#day-impact-container').innerHTML = `${storyEffectsSummary(result)}<div class="impact-viz" id="day-impact-viz">
     <div class="impact-meter"><span>Reach</span><div class="impact-track"><div class="impact-fill reach" data-width="${result.reach}"></div></div><strong data-count="${result.reach}">0</strong></div>
     <div class="impact-meter"><span>Trust</span><div class="impact-track"><div class="impact-fill trust" data-width="${result.trust}"></div></div><strong data-count="${result.trust}">0</strong></div>
     <div class="audience-flow">
@@ -424,6 +615,7 @@ function showFinalSummary() {
     <div class="metric" style="animation-delay:70ms"><span>AI assignments</span><strong data-count="${totals.ai}">0</strong></div>
     <div class="metric" style="animation-delay:140ms"><span>Human + AI</span><strong data-count="${totals.verified}">0</strong></div>`;
   $('#final-editorial-summary').innerHTML = editorialSummary(totals);
+  $('#final-story-effects').innerHTML = finalStoryEffectsSummary(state.dailyResults);
   $('#final-day-bars-container').innerHTML = `<div class="day-bars" id="final-day-bars">${state.dailyResults.map(day => {
     const oneTimeWidth = day.oneTime / day.traffic * 100;
     const repeatWidth = day.repeat / day.traffic * 100;
@@ -470,16 +662,22 @@ function render() {
   dayAssignments.forEach(choice => { if (choice) counts[choice]++; });
   $('#day').textContent = `${state.day}/3`;
   $('#assigned').textContent = `${dayAssigned}/${TASKS_PER_DAY}`;
-  $('#retained').textContent = state.repeatVisitors;
+  const headerSubscribers = Math.floor(state.repeatVisitors / 3);
+  const headerRepeatVisitors = state.repeatVisitors % 3;
+  const headerOneTimeVisitors = state.dailyResults.reduce((sum, result) => sum + result.oneTime, 0);
+  $('#one-time-header').textContent = headerOneTimeVisitors;
+  $('#repeat-header').textContent = headerRepeatVisitors;
+  $('#subscriber-header').textContent = headerSubscribers;
   $('#human-count').textContent = counts.human;
   $('#ai-count').textContent = counts.ai;
   $('#collab-count').textContent = counts.verified;
 
-  const storyList = `<div class="story-tabs" role="tablist" aria-label="Day ${state.day} stories">${state.stories.map(item => {
+  const animateStories = Boolean(state.animateStories);
+  const storyList = `<div class="story-tabs" role="tablist" aria-label="Day ${state.day} stories">${state.stories.map((item, storyIndex) => {
     const progress = flattened(item).filter(Boolean).length;
     const complete = progress === TOTAL_TASKS;
     const type = storyTypeFor(item);
-    return `<button type="button" role="tab" aria-selected="${item.id === story.id}" class="story-tab ${complete ? 'complete' : 'incomplete'} ${item.id === story.id ? 'active' : ''}" data-action="select-story" data-story="${item.id}"><span class="story-tab-labels"><b>${TOPICS[item.topic]}</b><i>${type.label}</i></span><strong>${item.title}</strong><span class="story-tab-description">${type.description}</span><span class="story-tab-progress">${progress}/${TOTAL_TASKS} assigned</span><span class="story-tab-status">${complete ? '✓ COMPLETE' : `TO DO · ${TOTAL_TASKS - progress} LEFT`}</span></button>`;
+    return `<button type="button" role="tab" aria-selected="${item.id === story.id}" class="story-tab ${complete ? 'complete' : 'incomplete'} ${item.id === story.id ? 'active' : ''} ${animateStories ? 'story-enter' : ''}" ${animateStories ? `style="animation-delay:${storyIndex * 150}ms"` : ''} data-action="select-story" data-story="${item.id}"><span class="story-tab-labels"><b>${TOPICS[item.topic]}</b><i>${type.label}</i></span><strong>${item.title}</strong><span class="story-tab-description">${type.description}</span><span class="story-tab-progress">${progress}/${TOTAL_TASKS} assigned</span><span class="story-tab-status">${complete ? '✓ COMPLETE' : `TO DO · ${TOTAL_TASKS - progress} LEFT`}</span></button>`;
   }).join('')}</div>`;
 
   const activeDeskIndex = Number.isInteger(state.activeDesk) && state.activeDesk >= 0 && state.activeDesk < DESKS.length ? state.activeDesk : 0;
@@ -493,13 +691,15 @@ function render() {
   const tasks = desk.tasks.map(([name, description], taskIndex) => {
     const selected = story.assignments[activeDeskIndex][taskIndex];
     const buttons = CHOICES.map(([key, label]) => `<button type="button" class="${selected === key ? 'selected' : ''}" aria-label="${label} for ${name}" aria-pressed="${selected === key}" data-action="assign" data-story="${story.id}" data-desk="${activeDeskIndex}" data-task="${taskIndex}" data-choice="${key}"><span>${label}</span></button>`).join('');
-    return `<div class="board-task"><div class="board-task-copy"><strong>${name}</strong> <span>${description}</span></div><div class="board-choices">${buttons}</div></div>`;
+    const explainer = selected ? `<p class="task-choice-explainer"><b>${CHOICES.find(([key]) => key === selected)[1]}:</b> ${TASK_EXPLAINERS[name][selected]}</p>` : '';
+    return `<div class="board-task"><div class="board-task-copy"><strong>${name}</strong> <span>${description}</span>${explainer}</div><div class="board-choices">${buttons}</div></div>`;
   }).join('');
   const deskPanel = `<section class="desk active-desk-panel" style="--desk:${desk.color}"><div class="desk-head"><div class="desk-head-title"><span>${activeDeskIndex + 1}</span><div><h3>${desk.name}</h3><p>${desk.subtitle}</p></div></div><div class="desk-head-bulk" aria-label="Assign all tasks at ${desk.name}"><small>Apply to all</small><div class="desk-bulk-choices">${bulk}</div></div></div>${tasks}<div class="desk-navigation"><button type="button" class="secondary" data-action="previous-desk" ${activeDeskIndex === 0 ? 'disabled' : ''}>Previous desk</button><button type="button" class="secondary" data-action="next-desk" ${activeDeskIndex === DESKS.length - 1 ? 'disabled' : ''}>Next desk</button></div></section>`;
 
   const remaining = TASKS_PER_DAY - dayAssigned;
   const impact = storyImpact(story);
-  $('#stories').innerHTML = `<div class="story-workspace"><aside class="story-column">${storyList}<div class="story-outlook" aria-label="Current story outlook: reach ${impact.reach}, trust ${impact.trust}"><strong>Story outlook</strong><div class="outlook-row"><span>Reach</span><i class="outlook-track"><i class="reach" style="width:${impact.reach}%"></i></i><b>${impact.reach}</b></div><div class="outlook-row"><span>Trust</span><i class="outlook-track"><i class="trust" style="width:${impact.trust}%"></i></i><b>${impact.trust}</b></div><small>Selected story · updates as you assign tasks</small></div></aside><article class="active-story" aria-label="Decisions for ${story.title}">${deskTabs}<div class="news-board single-desk">${deskPanel}</div></article></div><div class="day-action"><strong>Day ${state.day} assignments</strong><p class="tiny">Complete all three story plans to see their combined audience impact.</p><button type="button" class="primary" data-action="finish-day" ${remaining ? 'disabled' : ''}>${remaining ? `${remaining} assignments remaining` : `Finish Day ${state.day}`}</button></div>`;
+  $('#stories').innerHTML = `<div class="story-workspace"><aside class="story-column"><h3 class="workspace-title">Your story leads</h3>${storyList}<div class="story-outlook" aria-label="Current story outlook: reach ${impact.reach}, trust ${impact.trust}"><strong>Story outlook</strong><div class="outlook-row"><span>Reach</span><i class="outlook-track"><i class="reach" style="width:${impact.reach}%"></i></i><b>${impact.reach}</b></div><div class="outlook-row"><span>Trust</span><i class="outlook-track"><i class="trust" style="width:${impact.trust}%"></i></i><b>${impact.trust}</b></div><small>Selected story · updates as you assign tasks</small></div></aside><article class="active-story" aria-label="Decisions for ${story.title}"><h3 class="workspace-title">Editorial decisions</h3>${deskTabs}<div class="news-board single-desk">${deskPanel}</div></article></div><div class="day-action"><strong>Day ${state.day} assignments</strong><p class="tiny">Complete all three story plans to see their combined audience impact.</p><button type="button" class="primary" data-action="finish-day" ${remaining ? 'disabled' : ''}>${remaining ? `${remaining} assignments remaining` : `Finish Day ${state.day}`}</button></div>`;
+  state.animateStories = false;
   $('#log').innerHTML = state.logs.map(item => item.reportDay
     ? `<div class="log-item"><button type="button" class="log-button" data-report-day="${item.reportDay}"><strong>${item.title}</strong><span>${item.detail}</span></button></div>`
     : `<div class="log-item"><strong>${item.title}</strong><span>${item.detail}</span></div>`).join('');

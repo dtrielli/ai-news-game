@@ -1,6 +1,6 @@
 # AI News Game
 
-**Current build: Aligned Content 1.14**
+**Current build: About Page 1.21**
 
 A barebones digital prototype of the AI News Game. It closely follows the current tabletop board: Reporting, Editing, Packaging, and Audience desks, each containing five tasks.
 
@@ -24,9 +24,15 @@ GitHub will provide a public URL after the first deployment finishes.
 - Three selectable stories per day, each with its own complete set of assignments
 - Twenty tabletop tasks per story, grouped into four compact desk tabs
 - Human, AI, and Human + AI (verified automation) assignments
+- A task-specific workflow explanation appears beneath each task after the player chooses Human, AI, or Human + AI
+- A footer link opens a dedicated About page with the project’s purpose, mechanics, development status, privacy information, and credits
+- The About page includes licensing and classroom-use sections, with a working link to a new print-and-play materials folder
+- The About page identifies the current version and revision date and clearly marks the game as a playtest under active development
+- Educational and training use is permitted with credit under the included playtest license
 - Desk-level controls for assigning all five tasks at once
 - Choices can be revised until the day is completed
 - Provisional readership effects: traffic, one-time visitors, repeat visitors, and subscribers
+- A persistent top-level audience breakdown separates one-time visitors, remaining repeat visitors, and subscribers
 - Story types that change the consequences of AI and Human + AI assignments for particular tasks
 - A live story-level reach and trust outlook that collects the effects of every assignment
 - One visible newsroom desk at a time, with compact desk tabs and completion counts
@@ -36,6 +42,12 @@ GitHub will provide a public URL after the first deployment finishes.
 - The selected story’s live reach and trust outlook placed directly beneath the story list
 - Matching story and decision panels with aligned edges, padding, borders, and height
 - The active desk fills the decision panel, with navigation and Story outlook anchored to the shared bottom edge
+- Evenly expanded task rows that use the full height of the decision board
+- Staggered story-entry animation at the beginning of each day
+- Story and decision panel titles for clearer hierarchy
+- Day and three-day summaries of story-specific AI-use bonuses and penalties
+- Task-level explanations identifying which AI or Human + AI assignments caused every story-type bonus or penalty
+- Slower, more deliberate story-entry animation
 - Desk-wide assignment controls placed in the colored desk header and aligned with the task-choice columns
 - No per-choice fit markers; players infer priorities from the story-type stakes and observe consequences in the Story outlook
 - Rules-based day reports that surface only the two strongest result drivers

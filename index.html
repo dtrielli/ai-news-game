@@ -54,10 +54,10 @@
 
     .status {
       display: grid;
-      grid-template-columns: repeat(3, minmax(110px, 1fr));
+      grid-template-columns: repeat(5, minmax(105px, 1fr));
       gap: 8px;
       flex: 1;
-      width: min(700px, 100%);
+      width: min(900px, 100%);
     }
 
     .metric { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
@@ -160,12 +160,14 @@
     .story-tab.active .story-tab-status { background: white; }
     .story-tab.active.incomplete .story-tab-status { color: #76520d; }
     .story-tab.active.complete .story-tab-status { color: #155d45; }
+    .story-tab.story-enter { animation: story-arrive .6s cubic-bezier(.2,.8,.2,1) both; }
     .story-tabs-bottom { margin-top: 12px; margin-bottom: 0; padding-top: 12px; border-top: 1px solid var(--line); }
     .active-story { display: flex; flex-direction: column; min-width: 0; background: var(--card); border: 1px solid var(--line); border-radius: 9px; padding: 11px; box-shadow: var(--shadow); }
     .news-board { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
     .news-board.single-desk { flex: 1; grid-template-columns: 1fr; }
     .desk { border: 1px solid color-mix(in srgb, var(--desk) 45%, white); border-radius: 8px; overflow: hidden; background: color-mix(in srgb, var(--desk) 6%, white); }
     .active-desk-panel { display: flex; flex-direction: column; min-height: 100%; }
+    .active-desk-panel .board-task { flex: 1; min-height: 70px; }
     .desk-head { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(270px, .9fr); gap: 12px; align-items: center; padding: 8px 9px; color: white; background: var(--desk); }
     .desk-head-title { display: flex; gap: 8px; align-items: center; min-width: 0; }
     .desk-head-title > span { display: grid; place-items: center; flex: 0 0 27px; height: 27px; border-radius: 50%; background: white; color: var(--desk); font-weight: 900; }
@@ -176,6 +178,8 @@
     .board-task-copy { font-size: .7rem; line-height: 1.35; }
     .board-task-copy strong { font-size: .72rem; }
     .board-task-copy span { color: var(--muted); }
+    .task-choice-explainer { margin: 5px 0 0; padding-left: 7px; border-left: 3px solid var(--desk); color: var(--ink); font-size: .64rem; line-height: 1.35; }
+    .task-choice-explainer b { color: var(--desk); font-size: inherit; }
     .board-choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
     .board-choices button { position: relative; min-width: 0; border: 1px solid var(--desk); border-radius: 5px; padding: 6px 5px; background: white; color: var(--desk); cursor: pointer; font-size: .67rem; font-weight: 850; }
     .board-choices button span, .board-choices button small { display: block; }
@@ -206,6 +210,7 @@
     .story-column .story-outlook { grid-template-columns: 1fr; margin-top: auto; padding: 10px; }
     .story-column .story-outlook > strong, .story-column .story-outlook > small { grid-column: 1; grid-row: auto; }
     .active-story > .desk-tabs { margin-top: 0; }
+    .workspace-title { margin: 0; color: var(--muted); font-size: .7rem; font-weight: 900; letter-spacing: .09em; text-transform: uppercase; }
     .desk-bulk-choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
     .desk-head-bulk > small { display: block; margin-bottom: 3px; color: white; font-size: .53rem; font-weight: 850; letter-spacing: .05em; text-transform: uppercase; opacity: .85; }
     .desk-head-bulk button { min-width: 0; border: 1px solid rgba(255,255,255,.8); border-radius: 5px; padding: 5px 3px; background: rgba(255,255,255,.12); color: white; cursor: pointer; font-size: .59rem; font-weight: 850; }
@@ -222,6 +227,31 @@
     .driver-box ul { margin: 5px 0 0; padding-left: 1.1rem; }
     .driver-box li { font-size: .82rem; }
     .driver-box li + li { margin-top: 4px; }
+    .story-effects { margin: 11px 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .story-effects > strong { display: block; padding: 7px 9px; background: var(--paper); font-size: .68rem; letter-spacing: .05em; text-transform: uppercase; }
+    .story-effect-row { display: grid; grid-template-columns: 1fr; gap: 7px; padding: 9px; border-top: 1px solid var(--line); }
+    .story-effect-row b, .story-effect-row small, .story-effect-row span { display: block; }
+    .story-effect-row b { font-size: .72rem; }
+    .story-effect-row small { color: var(--muted); font-size: .62rem; }
+    .story-effect-row span { font-size: .68rem; font-weight: 800; }
+    .effect-totals { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+    .effect-reasons { margin: 7px 0 0; padding-left: 1.15rem; color: var(--ink); }
+    .effect-reasons li { padding-left: 2px; font-size: .72rem; line-height: 1.4; }
+    .effect-reasons li + li { margin-top: 5px; }
+    .effect-reasons .bonus::marker { color: var(--green); }
+    .effect-reasons .penalty::marker { color: var(--red); }
+    .effect-reason-empty { margin-top: 6px; font-size: .7rem; }
+    .effect-positive { color: var(--green); }
+    .effect-negative { color: var(--red); }
+    .effect-neutral { color: var(--muted); }
+    .effect-rollup { display: grid; grid-template-columns: 1fr; gap: 7px; }
+    .effect-rollup > div { padding: 9px; border: 1px solid var(--line); border-radius: 7px; background: var(--paper); }
+    .effect-rollup strong, .effect-rollup span { display: block; }
+    .effect-rollup span { margin-top: 3px; font-size: .68rem; font-weight: 800; }
+    .effect-rollup details { margin-top: 7px; border-top: 1px solid var(--line); padding-top: 6px; }
+    .effect-rollup summary { color: var(--blue); cursor: pointer; font-size: .68rem; font-weight: 850; }
+    .rollup-story { margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--line); }
+    .rollup-story > b { font-size: .72rem; }
     .impact-viz { margin-top: 16px; padding: 14px; border: 1px solid var(--line); border-radius: 9px; background: var(--paper); }
     .impact-meter { display: grid; grid-template-columns: 55px 1fr 35px; gap: 8px; align-items: center; margin: 7px 0; font-size: .75rem; font-weight: 800; }
     .impact-track { height: 12px; overflow: hidden; border-radius: 20px; background: #ddd7ce; }
@@ -291,6 +321,7 @@
     @keyframes enter { from { transform: translateY(-6px); opacity: 0; } }
     @keyframes metric-in { to { opacity: 1; transform: translateY(0); } }
     @keyframes audience-in { to { opacity: 1; transform: scale(1); } }
+    @keyframes story-arrive { from { opacity: 0; transform: translateX(-24px) scale(.94); } to { opacity: 1; transform: translateX(0) scale(1); } }
 
     @media (max-width: 950px) {
       header { align-items: flex-start; flex-direction: column; }
@@ -303,7 +334,7 @@
 
     @media (max-width: 650px) {
       .shell { padding: 10px; }
-      .status { grid-template-columns: repeat(3, minmax(92px, 1fr)); }
+      .status { grid-template-columns: repeat(5, minmax(92px, 1fr)); }
       main { grid-template-columns: 1fr; }
       .panel { min-height: auto; }
       .reader-list { max-height: 250px; }
@@ -320,6 +351,7 @@
       .story-outlook { grid-template-columns: 1fr; }
       .story-outlook > strong, .story-outlook > small { grid-column: 1; grid-row: auto; }
       .result-grid.allocation-grid, .audience-breakdown-cards { grid-template-columns: 1fr; }
+      .story-effect-row, .effect-rollup { grid-template-columns: 1fr; }
     }
 
     @media (max-height: 720px) {
@@ -334,6 +366,7 @@
       *, *::before, *::after { animation: none !important; transition: none !important; }
       .result-grid .metric, .audience-dot { opacity: 1; transform: none; }
       .logic-animation.sequencing .logic-step { opacity: 1; transform: none; filter: none; }
+      .story-tab.story-enter { opacity: 1; transform: none; }
     }
   </style>
 </head>
@@ -346,7 +379,9 @@
       <div class="status" aria-label="Game status">
         <div class="metric"><span>Day</span><strong id="day">1/3</strong></div>
         <div class="metric"><span>Tasks assigned</span><strong id="assigned">0/20</strong></div>
-        <div class="metric"><span>Retained audience</span><strong id="retained">0</strong></div>
+        <div class="metric"><span>One-time visitors</span><strong id="one-time-header">0</strong></div>
+        <div class="metric"><span>Repeat visitors</span><strong id="repeat-header">0</strong></div>
+        <div class="metric"><span>Subscribers</span><strong id="subscriber-header">0</strong></div>
       </div>
       <div class="header-actions"><button type="button" class="help-button" id="open-help">How to play</button></div>
     </header>
@@ -376,6 +411,7 @@
     <footer class="project-footer">
       <p><strong>AI News Game</strong> is a research and educational project developed by Daniel Trielli at the University of Maryland’s Philip Merrill College of Journalism. Supported by the Lucy Dalglish Faculty Fund for Media &amp; Democracy.</p>
       <p>© 2026 Daniel Trielli. All rights reserved. The views expressed through this project do not necessarily represent the University of Maryland. This version does not collect or transmit player data. Contact: <a href="mailto:dtrielli@umd.edu">dtrielli@umd.edu</a>.</p>
+      <p><a href="about.html"><strong>About this project</strong></a></p>
     </footer>
   </div>
 
@@ -430,6 +466,10 @@
         <h3 id="final-editorial-title">Your three-day editorial strategy</h3>
         <div class="result-grid allocation-grid" id="final-allocation-grid"></div>
         <p class="report-explanation" id="final-editorial-summary"></p>
+      </section>
+      <section class="report-section" aria-labelledby="final-story-effects-title">
+        <h3 id="final-story-effects-title">Story-type bonuses and penalties</h3>
+        <div id="final-story-effects"></div>
       </section>
       <section class="report-section" aria-labelledby="final-impact-title">
         <h3 id="final-impact-title">How readership changed</h3>
@@ -786,6 +826,6 @@
   <script src="data/scenarios.js"></script>
   <script src="data/round-events.js"></script>
   <script src="data/resource-rules.js"></script>
-  <script src="app.js?v=aligned-content-1.14"></script>
+  <script src="app.js?v=task-explainers-1.17"></script>
 </body>
 </html>

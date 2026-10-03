@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About · AI News Game</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #5d6975;
+      --paper: #f4f1ea;
+      --card: #fffefa;
+      --line: #d7d0c5;
+      --blue: #236b8e;
+      --green: #25785b;
+      --gold: #d59a28;
+      --shadow: 0 7px 24px rgba(35, 33, 28, .08);
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    a { color: var(--blue); }
+    a:focus-visible { outline: 3px solid #111; outline-offset: 3px; }
+    .shell { width: min(900px, 100%); margin: auto; padding: 22px 18px 40px; }
+    header { display: flex; justify-content: space-between; gap: 20px; align-items: flex-end; padding-bottom: 18px; border-bottom: 3px solid var(--ink); }
+    .kicker { margin: 0 0 5px; color: var(--muted); font-size: .78rem; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { margin: 0; font: 700 clamp(2rem, 7vw, 3.6rem)/.98 Georgia, serif; }
+    .back { flex: 0 0 auto; border: 1px solid var(--ink); border-radius: 8px; padding: 8px 13px; color: var(--ink); font-weight: 850; text-decoration: none; }
+    main { margin-top: 16px; }
+    .intro { padding: clamp(20px, 5vw, 38px); border-radius: 11px; background: var(--ink); color: white; box-shadow: var(--shadow); }
+    .intro p { max-width: 67ch; margin: 0; font: 1.12rem/1.55 Georgia, serif; }
+    .sections { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+    section { padding: 20px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); box-shadow: var(--shadow); }
+    section.wide { grid-column: 1 / -1; }
+    h2 { margin: 0 0 9px; font-size: 1rem; letter-spacing: .06em; text-transform: uppercase; }
+    p { margin: 0; }
+    p + p { margin-top: 10px; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+    .step { padding: 11px; border-top: 4px solid var(--gold); background: var(--paper); font-size: .82rem; }
+    .step strong { display: block; margin-bottom: 3px; }
+    .note { border-left: 4px solid var(--blue); }
+    footer { margin-top: 18px; padding-top: 15px; border-top: 1px solid var(--line); color: var(--muted); font-size: .75rem; }
+    footer p + p { margin-top: 5px; }
+    @media (max-width: 660px) {
+      header { align-items: flex-start; }
+      .sections, .steps { grid-template-columns: 1fr; }
+      section.wide { grid-column: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div><p class="kicker">Research and educational project</p><h1>About the AI News Game</h1></div>
+      <a class="back" href="index.html">Return to the game</a>
+    </header>
+
+    <main>
+      <div class="intro"><p>The AI News Game is a newsroom simulation about the choices involved in using artificial intelligence to produce and distribute journalism. It invites players to consider AI use task by task, rather than as one decision for an entire newsroom.</p></div>
+
+      <div class="sections">
+        <section class="wide">
+          <h2>How the game works</h2>
+          <p>Players decide whether Human, AI, or Human + AI will perform 20 newsroom tasks for three stories on each of three days. Story type changes how some AI-assisted decisions affect reach and trust.</p>
+          <div class="steps">
+            <div class="step"><strong>1 · Make assignments</strong>Choose who performs each reporting, editing, packaging, and audience task.</div>
+            <div class="step"><strong>2 · Observe trade-offs</strong>See how the full editorial plan affects estimated reach and trust.</div>
+            <div class="step"><strong>3 · Follow the audience</strong>See how reach attracts visitors and trust contributes to repeat visits and subscribers.</div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Why a game?</h2>
+          <p>Games can turn abstract ideas into a concrete, practical understanding of social mechanics. This game shows players that using AI in journalism is not one decision, but a series of editorial choices. Those choices can shape how audiences perceive journalistic work and how they choose to engage with it.</p>
+        </section>
+
+        <section class="note">
+          <h2>A playtest model</h2>
+          <p>The numerical effects are provisional game mechanics. They are intended to make trade-offs visible during playtesting; they are not empirical claims about the performance of people or AI.</p>
+        </section>
+
+        <section>
+          <h2>Privacy</h2>
+          <p>This version does not collect or transmit player data. Progress is stored only in the player’s browser so an unfinished game can be resumed.</p>
+        </section>
+
+        <section>
+          <h2>Licensing</h2>
+          <p>You may use and share the unmodified game for educational and training purposes, provided that you credit the AI News Game and Daniel Trielli and the University of Maryland. Publishing modified versions, redistributing the source as a separate product, and other uses require written permission.</p>
+          <p><a href="LICENSE.md">Read the full playtest license</a>.</p>
+        </section>
+
+        <section class="wide">
+          <h2>Classroom use</h2>
+          <p>This version can be used for individual play or as the starting point for a class discussion about AI and editorial decision-making. A classroom edition is planned with discussion questions that appear during and after play.</p>
+          <p>A physical edition is also in development, with versions for cards and chips and for pen-and-paper play. Printable materials will be added as they become available.</p>
+          <p><a href="print-and-play/">Visit the print-and-play materials page</a>.</p>
+        </section>
+
+        <section class="wide">
+          <h2>Development, project, and feedback</h2>
+          <p>This is a playtest version. The scoring model, story scenarios, classroom discussion prompts, and print-and-play materials are still being developed and tested.</p>
+          <p>Developed by Daniel Trielli at the University of Maryland’s Philip Merrill College of Journalism. Supported by the Lucy Dalglish Faculty Fund for Media &amp; Democracy.</p>
+          <p>Feedback is especially helpful on whether the choices are clear, whether the results make sense, and what the game leads you to think or talk about. Send feedback to <a href="mailto:dtrielli@umd.edu?subject=AI%20News%20Game%20playtest%20feedback">dtrielli@umd.edu</a>.</p>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <p><strong>Version 1.21</strong> | Revised October 2, 2026</p>
+      <p>© 2026 Daniel Trielli. All rights reserved.</p>
+      <p>The views expressed through this project do not necessarily represent the University of Maryland.</p>
+    </footer>
+  </div>
+</body>
+</html>
