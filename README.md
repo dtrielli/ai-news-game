@@ -1,6 +1,6 @@
 # AI News Game
 
-**Current build: Website 1.22**
+**Current build: Website 1.23 with classroom facilitator guides**
 
 A barebones digital prototype of the AI News Game. It closely follows the current tabletop board: Reporting, Editing, Packaging, and Audience desks, each containing five tasks.
 
@@ -108,7 +108,7 @@ Resource use is calculated separately from assignment labels: Human uses one Hum
 - Authorship, copyright, UMD affiliation, funding, non-endorsement, contact, and no-data-collection notice
 - Day and final reports reset to their headings instead of opening scrolled to the bottom
 - Responsive layout and keyboard-accessible controls
-- Playtest prompts and a direct email feedback link in the final report
+- A short optional Google Forms feedback link in the final report and About page
 - A visible loading error if required configuration files are missing
 
 ## Important limitation
