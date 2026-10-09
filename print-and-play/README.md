@@ -11,3 +11,5 @@ Planned edition:
 - Cards and chips: player boards, facilitator materials, cards, and assignment chips
 
 The materials are still in development. The scoring model and story effects are provisional discussion tools.
+
+Story content and scoring rules are maintained in `../data/stories.js`. The PDF is a fixed export and must be regenerated after those source data change.

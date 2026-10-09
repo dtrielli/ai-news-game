@@ -27,11 +27,21 @@ const DESKS = [
     ['Community Management', 'Manage comments, audience interactions, and online communities.'] ] }
 ];
 
-const SCENARIO_DATA = window.AI_NEWS_SCENARIO_DATA;
-if (!SCENARIO_DATA || !Array.isArray(SCENARIO_DATA.scenarios) || !SCENARIO_DATA.scenarios.length) {
-  throw new Error('Scenario data is missing or invalid.');
+const CONTENT_DATA = window.AI_NEWS_CONTENT;
+if (!CONTENT_DATA || !Array.isArray(CONTENT_DATA.stories) || !CONTENT_DATA.stories.length || !CONTENT_DATA.storyTypes) {
+  throw new Error('Shared story data is missing or invalid.');
 }
-const STORY_POOL = SCENARIO_DATA.scenarios;
+const STORY_POOL = CONTENT_DATA.stories.map(story => ({
+  id: story.id,
+  title: story.title,
+  topic: story.topic.key,
+  storyType: story.digital.storyType,
+  modifiers: story.digital.modifiers || {},
+  background: story.digital.background,
+  focus: story.digital.focus,
+  expectation: story.digital.expectation,
+  taskFitOverrides: story.digital.taskFitOverrides || {}
+}));
 const ROUND_EVENT_DATA = window.AI_NEWS_ROUND_EVENT_DATA;
 if (!ROUND_EVENT_DATA || !Array.isArray(ROUND_EVENT_DATA.schedule) || !Array.isArray(ROUND_EVENT_DATA.events)) {
   throw new Error('Round-event data is missing or invalid.');
@@ -41,7 +51,7 @@ if (!RESOURCE_RULES || !RESOURCE_RULES.assignmentCosts || !RESOURCE_RULES.defaul
   throw new Error('Resource-rule data is missing or invalid.');
 }
 
-const TOPICS = { local: 'Local life', climate: 'Climate', government: 'Government', health: 'Public health', schools: 'Schools' };
+const TOPICS = { local: 'Local life', climate: 'Climate', government: 'Government', health: 'Public health', schools: 'Schools', elections: 'Elections' };
 const CHOICES = [['human', 'Human'], ['ai', 'AI'], ['verified', 'Human + AI', 'Verified automation']];
 const BASE_EFFECTS = { human: { reach: 1, trust: 3 }, ai: { reach: 3, trust: 1 }, verified: { reach: 2, trust: 2 } };
 const TASK_EXPLAINERS = {
@@ -147,15 +157,21 @@ const TASK_EXPLAINERS = {
   }
 };
 const TOTAL_TASKS = DESKS.reduce((sum, desk) => sum + desk.tasks.length, 0);
-const TASKS_PER_DAY = TOTAL_TASKS * 3;
-const STORAGE_KEY = 'ai-news-game-save-v4';
+const GAME_CONFIG = window.AI_NEWS_GAME_CONFIG || {};
+const STORIES_PER_DAY = Number.isInteger(GAME_CONFIG.storiesPerDay) && GAME_CONFIG.storiesPerDay > 0 ? GAME_CONFIG.storiesPerDay : 1;
+const EDITION_KEY = GAME_CONFIG.editionKey || `stories-${STORIES_PER_DAY}`;
+const EDITION_LABEL = GAME_CONFIG.editionLabel || (STORIES_PER_DAY === 1 ? 'Main game' : 'Expanded game');
+const TASKS_PER_DAY = TOTAL_TASKS * STORIES_PER_DAY;
+const STORAGE_KEY = `ai-news-game-save-v6-${EDITION_KEY}`;
 const state = { day: 1, stories: [], activeId: 1, activeDesk: 0, nextId: 1, nextTemplate: 0, logs: [], dailyResults: [], repeatVisitors: 0, totalTraffic: 0, phase: 'assigning', animateStories: false };
 const $ = selector => document.querySelector(selector);
+
+document.title = `${EDITION_LABEL} · AI News Game`;
 
 function readSavedGame() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (!saved || saved.version !== 4 || !saved.state || !Array.isArray(saved.state.stories) || !Array.isArray(saved.state.dailyResults)) return null;
+    if (!saved || saved.version !== 6 || !saved.state || !Array.isArray(saved.state.stories) || saved.state.stories.length !== STORIES_PER_DAY || !Array.isArray(saved.state.dailyResults)) return null;
     return saved.state;
   } catch (error) {
     return null;
@@ -163,7 +179,7 @@ function readSavedGame() {
 }
 
 function saveGame() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 4, state })); } catch (error) { /* The game remains playable when local storage is unavailable. */ }
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 6, state })); } catch (error) { /* The game remains playable when local storage is unavailable. */ }
 }
 
 function clearSavedGame() {
@@ -192,6 +208,9 @@ function makeStory() {
     title: scenario.title,
     storyType: scenario.storyType,
     modifiers: scenario.modifiers || {},
+    background: scenario.background,
+    focus: scenario.focus,
+    expectation: scenario.expectation,
     assignments: makeAssignments()
   };
 }
@@ -199,9 +218,9 @@ function newDay() {
   state.phase = 'assigning';
   state.activeDesk = 0;
   state.animateStories = true;
-  state.stories = [makeStory(), makeStory(), makeStory()];
+  state.stories = Array.from({ length: STORIES_PER_DAY }, () => makeStory());
   state.activeId = state.stories[0].id;
-  addLog(`Day ${state.day} begins`, 'Three stories are ready for newsroom assignments.');
+  addLog(`Day ${state.day} begins`, STORIES_PER_DAY === 1 ? 'One story is ready for newsroom assignments.' : `${STORIES_PER_DAY} stories are ready for newsroom assignments.`);
   render();
 }
 function reset() {
@@ -251,10 +270,11 @@ function resourceConstraintMessages(day = state.day) {
 }
 
 function storyTypeFor(story) {
-  return SCENARIO_DATA.storyTypes[story.storyType] || { label: 'General news', description: '', taskFit: {} };
+  return CONTENT_DATA.storyTypes[story.storyType] || { label: 'General news', description: '', taskFit: {} };
 }
 
 function taskFit(story, taskName) {
+  if (Object.hasOwn(story.taskFitOverrides || {}, taskName)) return Number(story.taskFitOverrides[taskName]);
   return Number(storyTypeFor(story).taskFit?.[taskName] || 0);
 }
 
@@ -698,7 +718,11 @@ function render() {
 
   const remaining = TASKS_PER_DAY - dayAssigned;
   const impact = storyImpact(story);
-  $('#stories').innerHTML = `<div class="story-workspace"><aside class="story-column"><h3 class="workspace-title">Your story leads</h3>${storyList}<div class="story-outlook" aria-label="Current story outlook: reach ${impact.reach}, trust ${impact.trust}"><strong>Story outlook</strong><div class="outlook-row"><span>Reach</span><i class="outlook-track"><i class="reach" style="width:${impact.reach}%"></i></i><b>${impact.reach}</b></div><div class="outlook-row"><span>Trust</span><i class="outlook-track"><i class="trust" style="width:${impact.trust}%"></i></i><b>${impact.trust}</b></div><small>Selected story · updates as you assign tasks</small></div></aside><article class="active-story" aria-label="Decisions for ${story.title}"><h3 class="workspace-title">Editorial decisions</h3>${deskTabs}<div class="news-board single-desk">${deskPanel}</div></article></div><div class="day-action"><strong>Day ${state.day} assignments</strong><p class="tiny">Complete all three story plans to see their combined audience impact.</p><button type="button" class="primary" data-action="finish-day" ${remaining ? 'disabled' : ''}>${remaining ? `${remaining} assignments remaining` : `Finish Day ${state.day}`}</button></div>`;
+  const completionPrompt = STORIES_PER_DAY === 1 ? 'Complete the story plan to see its audience impact.' : `Complete all ${STORIES_PER_DAY} story plans to see their combined audience impact.`;
+  const outlook = `<div class="story-outlook" aria-label="Current story outlook: reach ${impact.reach}, trust ${impact.trust}"><strong>Story outlook</strong><div class="outlook-row"><span>Reach</span><i class="outlook-track"><i class="reach" style="width:${impact.reach}%"></i></i><b>${impact.reach}</b></div><div class="outlook-row"><span>Trust</span><i class="outlook-track"><i class="trust" style="width:${impact.trust}%"></i></i><b>${impact.trust}</b></div><small>Updates as you assign tasks</small></div>`;
+  const expandedWorkspace = `<div class="story-workspace"><aside class="story-column"><h3 class="workspace-title">Your story leads</h3>${storyList}${outlook}</aside><article class="active-story" aria-label="Decisions for ${story.title}"><h3 class="workspace-title">Editorial decisions</h3>${deskTabs}<div class="news-board single-desk">${deskPanel}</div></article></div>`;
+  const singleWorkspace = `<div class="single-story-workspace"><article class="single-story-brief"><p class="story-brief-label">${TOPICS[story.topic]} · ${storyTypeFor(story).label}</p><h3>${story.title}</h3><p>${story.background}</p><details><summary>What users expect from this type of story</summary><div class="expectation-copy"><p>${storyTypeFor(story).description}</p><p><strong>For this story:</strong> ${story.expectation}</p><p><strong>Editorial priority:</strong> ${story.focus}</p></div></details></article>${outlook}<article class="active-story" aria-label="Decisions for ${story.title}"><h3 class="workspace-title">Editorial decisions</h3>${deskTabs}<div class="news-board single-desk">${deskPanel}</div></article></div>`;
+  $('#stories').innerHTML = `${STORIES_PER_DAY === 1 ? singleWorkspace : expandedWorkspace}<div class="day-action"><strong>Day ${state.day} assignments</strong><p class="tiny">${completionPrompt}</p><button type="button" class="primary" data-action="finish-day" ${remaining ? 'disabled' : ''}>${remaining ? `${remaining} assignments remaining` : `Finish Day ${state.day}`}</button></div>`;
   state.animateStories = false;
   $('#log').innerHTML = state.logs.map(item => item.reportDay
     ? `<div class="log-item"><button type="button" class="log-button" data-report-day="${item.reportDay}"><strong>${item.title}</strong><span>${item.detail}</span></button></div>`

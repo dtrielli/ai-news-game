@@ -2,7 +2,7 @@
  * AI News Game resource constraints
  *
  * Constraints are disabled by default. When enabled, limits apply to a whole
- * day (all 60 task assignments across its three stories).
+ * day. The number of assignments depends on the digital edition.
  *
  * Human + AI uses one unit of each resource. This keeps resource limits tied
  * to the labor/tools consumed rather than only to the selected button label.

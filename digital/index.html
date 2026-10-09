@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Digital Game · AI News Game</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #5d6975;
+      --paper: #f4f1ea;
+      --card: #fffefa;
+      --line: #d7d0c5;
+      --red: #d94b3d;
+      --blue: #236b8e;
+      --green: #25785b;
+      --gold: #d59a28;
+      --shadow: 0 7px 24px rgba(35, 33, 28, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--paper);
+      color: var(--ink);
+      font: 16px/1.4 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button { font: inherit; }
+    button:focus-visible { outline: 3px solid #111; outline-offset: 3px; }
+
+    .shell { width: min(1440px, 100%); margin: auto; padding: 18px; }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: flex-end;
+      padding-bottom: 15px;
+      border-bottom: 3px solid var(--ink);
+    }
+
+    .header-actions { display: flex; gap: 8px; align-items: stretch; }
+    .help-button { display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--ink); border-radius: 8px; padding: 8px 13px; background: transparent; color: var(--ink); cursor: pointer; font-weight: 850; text-decoration: none; }
+
+    h1 { margin: 0; font-family: Georgia, serif; font-size: clamp(1.8rem, 4vw, 3.2rem); line-height: .95; }
+    h2 { margin: 0 0 12px; font: 800 1rem/1.1 system-ui; letter-spacing: .08em; text-transform: uppercase; }
+    h3 { margin: 0; font-size: 1.02rem; line-height: 1.25; }
+    p { margin: 0; }
+    .kicker, .tiny { color: var(--muted); font-size: .79rem; }
+    .kicker { font-weight: 800; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 6px; }
+
+    .status {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(105px, 1fr));
+      gap: 8px;
+      flex: 1;
+      width: min(900px, 100%);
+    }
+
+    .metric { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+    .metric span { display: block; color: var(--muted); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
+    .metric strong { font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+    .pause-button {
+      width: 100%; height: 100%; border: 0; border-radius: 8px;
+      background: var(--ink); color: white; cursor: pointer; font-weight: 850;
+    }
+
+    main { display: grid; grid-template-columns: minmax(520px, 2.2fr) minmax(240px, .8fr); gap: 14px; margin-top: 14px; }
+    .panel { background: rgba(255, 254, 250, .72); border: 1px solid var(--line); border-radius: 10px; padding: 14px; min-height: 68vh; }
+    .project-footer { margin-top: 16px; padding: 15px 2px 4px; border-top: 1px solid var(--line); color: var(--muted); font-size: .74rem; line-height: 1.5; }
+    .project-footer p + p { margin-top: 4px; }
+    .project-footer a { color: var(--blue); }
+    .privacy-note { padding: 10px; border-left: 4px solid var(--blue); background: #edf6fa; color: var(--ink) !important; font-size: .82rem; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 22px; }
+    .button-row .primary { margin-top: 0; }
+    .button-row .secondary { padding-inline: 18px; }
+    .feedback-list { padding-left: 1.2rem; color: var(--muted); }
+    .feedback-list li + li { margin-top: 5px; }
+    .text-link { color: var(--blue); font-weight: 800; }
+    .startup-error { margin-top: 14px; padding: 12px; border: 2px solid var(--red); border-radius: 8px; background: #fff0ed; color: var(--ink); }
+
+    .reader-list, .story-list, .log { display: grid; gap: 9px; }
+    .reader-list { max-height: 61vh; overflow: auto; }
+    .reader { background: var(--card); border: 1px solid var(--line); border-left: 5px solid var(--blue); border-radius: 7px; padding: 9px; animation: enter .22s ease-out; }
+    .reader.leaving { border-left-color: var(--red); opacity: .6; }
+    .reader-head { display: flex; justify-content: space-between; gap: 8px; }
+    .reader .need { margin-top: 5px; color: var(--muted); font-size: .78rem; }
+    .patience { height: 5px; margin-top: 8px; border-radius: 5px; overflow: hidden; background: #e4ded5; }
+    .patience > div { height: 100%; background: var(--green); transition: width .25s linear, background .25s; }
+
+    .story { background: var(--card); border: 1px solid var(--line); border-radius: 9px; padding: 13px; box-shadow: var(--shadow); }
+    .story-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+    .story-labels { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; margin-bottom: 5px; }
+    .story-labels .kicker { margin: 0; }
+    .story-type-badge { padding: 2px 7px; border-radius: 99px; background: var(--ink); color: white; font-size: .65rem; font-weight: 850; }
+    .story-stakes { max-width: 72ch; margin: 5px 0 3px; color: var(--muted); font-size: .78rem; }
+    .tag { border: 1px solid currentColor; border-radius: 99px; padding: 2px 7px; color: var(--blue); font-size: .7rem; font-weight: 800; white-space: nowrap; }
+    .stage-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin: 12px 0; }
+    .stage { padding-top: 6px; border-top: 5px solid #ded9d0; color: var(--muted); font-size: .67rem; font-weight: 800; text-transform: uppercase; }
+    .stage.done { border-color: var(--green); color: var(--green); }
+    .stage.current { border-color: var(--gold); color: var(--ink); }
+    .task-line { min-height: 1.4em; font-size: .84rem; color: var(--muted); }
+    .assignments { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-top: 10px; }
+    .assignments button, .primary, .secondary {
+      border: 0;
+      border-radius: 7px;
+      padding: 9px 8px;
+      cursor: pointer;
+      font-weight: 850;
+    }
+    .assignments button { background: #e8e2d9; color: var(--ink); }
+    .assignments button:hover:not(:disabled) { transform: translateY(-1px); background: #ddd5c9; }
+    .assignments button.selected { background: var(--ink); color: white; }
+    button:disabled { opacity: .42; cursor: not-allowed; }
+    .working { color: var(--blue); font-weight: 800; }
+    .workbar { height: 8px; background: #e4ded5; border-radius: 5px; overflow: hidden; margin-top: 9px; }
+    .workbar > div { height: 100%; width: 0; background: var(--blue); transition: width .1s linear; }
+
+    .capacity { display: grid; gap: 8px; margin-bottom: 16px; }
+    .capacity-row { display: grid; grid-template-columns: 58px 1fr 38px; gap: 8px; align-items: center; font-size: .82rem; }
+    .capacity-bar { height: 9px; background: #ded8cf; border-radius: 9px; overflow: hidden; }
+    .capacity-bar div { height: 100%; background: var(--blue); transition: width .25s; }
+    .capacity-row.ai .capacity-bar div { background: var(--red); }
+    .log { max-height: 45vh; overflow: auto; }
+    .log-item { padding: 8px 0; border-bottom: 1px solid var(--line); font-size: .79rem; }
+    .log-item strong { display: block; }
+    .log-button { width: 100%; border: 0; padding: 9px; border-radius: 7px; background: #e8e2d9; color: var(--ink); text-align: left; cursor: pointer; }
+    .log-button:hover { background: #ddd5c9; }
+    .log-button strong, .log-button span { display: block; }
+    .task-card { border-top: 1px solid var(--line); padding: 11px 0; }
+    .task-card:first-of-type { margin-top: 10px; }
+    .task-card .assignments { grid-template-columns: .8fr .8fr 1.5fr; }
+    .task-heading { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+    .task-description { color: var(--muted); font-size: .77rem; }
+    .publish { width: 100%; margin-top: 12px; background: var(--green); color: white; }
+    .allocation-list { display: grid; gap: 8px; margin-bottom: 18px; }
+    .allocation-item { display: flex; justify-content: space-between; padding: 8px; background: var(--card); border: 1px solid var(--line); border-radius: 7px; }
+    .story-workspace { display: grid; grid-template-columns: minmax(210px, .72fr) minmax(0, 2fr); gap: 10px; align-items: stretch; }
+    .single-story-workspace { display: grid; gap: 10px; }
+    .single-story-brief { padding: clamp(16px, 3vw, 24px); border: 1px solid var(--line); border-top: 6px solid var(--blue); border-radius: 9px; background: var(--card); box-shadow: var(--shadow); }
+    .single-story-brief .story-brief-label { margin: 0 0 6px; color: var(--blue); font-size: .68rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+    .single-story-brief h3 { margin: 0 0 8px; font: 800 clamp(1.25rem, 3vw, 1.7rem)/1.15 Georgia, serif; }
+    .single-story-brief > p:not(.story-brief-label) { margin: 0; color: var(--muted); font-size: .9rem; }
+    .single-story-brief details { margin-top: 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
+    .single-story-brief summary { padding: 10px 12px; color: var(--blue); cursor: pointer; font-size: .82rem; font-weight: 850; }
+    .single-story-brief .expectation-copy { padding: 0 12px 12px; border-top: 1px solid var(--line); }
+    .single-story-brief .expectation-copy p { margin: 10px 0 0; color: var(--ink); font-size: .8rem; }
+    .single-story-workspace > .story-outlook { margin-top: 0; }
+    .story-column { display: flex; flex-direction: column; gap: 8px; min-width: 0; background: var(--card); border: 1px solid var(--line); border-radius: 9px; padding: 11px; box-shadow: var(--shadow); }
+    .story-tabs { display: grid; grid-template-columns: 1fr; gap: 7px; }
+    .story-tab { text-align: left; border: 1px solid var(--line); border-radius: 8px; background: #e8e2d9; padding: 8px; cursor: pointer; }
+    .story-tab strong, .story-tab span { display: block; }
+    .story-tab strong { font-size: .78rem; line-height: 1.2; }
+    .story-tab span { margin-top: 4px; color: var(--muted); font-size: .68rem; }
+    .story-tab-labels { display: flex !important; flex-wrap: wrap; gap: 4px; align-items: center; margin: 0 0 5px !important; }
+    .story-tab-labels b { font-size: .58rem; letter-spacing: .08em; text-transform: uppercase; }
+    .story-tab-labels i { padding: 1px 5px; border-radius: 99px; background: var(--ink); color: white; font-size: .55rem; font-style: normal; font-weight: 800; }
+    .story-tab-description { margin-top: 6px !important; font-size: .62rem !important; line-height: 1.3; }
+    .story-tab-progress { font-size: .61rem !important; }
+    .story-tab.active { background: var(--ink); color: white; }
+    .story-tab.active span { color: #d9e0e6; }
+    .story-tab.incomplete { border-left: 5px solid var(--gold); }
+    .story-tab.complete { border-left: 5px solid var(--green); }
+    .story-tab-status { display: inline-block !important; width: max-content; margin-top: 6px !important; padding: 2px 6px; border-radius: 99px; font-size: .58rem !important; font-weight: 900; letter-spacing: .03em; }
+    .story-tab.incomplete .story-tab-status { background: #fff0c5; color: #76520d; }
+    .story-tab.complete .story-tab-status { background: #d8eee4; color: #155d45; }
+    .story-tab.active .story-tab-status { background: white; }
+    .story-tab.active.incomplete .story-tab-status { color: #76520d; }
+    .story-tab.active.complete .story-tab-status { color: #155d45; }
+    .story-tab.story-enter { animation: story-arrive .6s cubic-bezier(.2,.8,.2,1) both; }
+    .story-tabs-bottom { margin-top: 12px; margin-bottom: 0; padding-top: 12px; border-top: 1px solid var(--line); }
+    .active-story { display: flex; flex-direction: column; min-width: 0; background: var(--card); border: 1px solid var(--line); border-radius: 9px; padding: 11px; box-shadow: var(--shadow); }
+    .news-board { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+    .news-board.single-desk { flex: 1; grid-template-columns: 1fr; }
+    .desk { border: 1px solid color-mix(in srgb, var(--desk) 45%, white); border-radius: 8px; overflow: hidden; background: color-mix(in srgb, var(--desk) 6%, white); }
+    .active-desk-panel { display: flex; flex-direction: column; min-height: 100%; }
+    .active-desk-panel .board-task { flex: 1; min-height: 70px; }
+    .desk-head { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(270px, .9fr); gap: 12px; align-items: center; padding: 8px 9px; color: white; background: var(--desk); }
+    .desk-head-title { display: flex; gap: 8px; align-items: center; min-width: 0; }
+    .desk-head-title > span { display: grid; place-items: center; flex: 0 0 27px; height: 27px; border-radius: 50%; background: white; color: var(--desk); font-weight: 900; }
+    .desk-head h3 { text-transform: uppercase; font-size: .82rem; }
+    .desk-head p { font-size: .67rem; opacity: .9; }
+    .board-task { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(270px, .9fr); gap: 12px; align-items: center; padding: 7px 9px; border-bottom: 1px solid color-mix(in srgb, var(--desk) 20%, white); }
+    .board-task:last-child { border-bottom: 0; }
+    .board-task-copy { font-size: .7rem; line-height: 1.35; }
+    .board-task-copy strong { font-size: .72rem; }
+    .board-task-copy span { color: var(--muted); }
+    .task-choice-explainer { margin: 5px 0 0; padding-left: 7px; border-left: 3px solid var(--desk); color: var(--ink); font-size: .64rem; line-height: 1.35; }
+    .task-choice-explainer b { color: var(--desk); font-size: inherit; }
+    .board-choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+    .board-choices button { position: relative; min-width: 0; border: 1px solid var(--desk); border-radius: 5px; padding: 6px 5px; background: white; color: var(--desk); cursor: pointer; font-size: .67rem; font-weight: 850; }
+    .board-choices button span, .board-choices button small { display: block; }
+    .board-choices button small { font-size: .54rem; font-weight: 650; }
+    .board-choices button.selected { background: var(--desk); color: white; }
+    .desk-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 12px; }
+    .desk-tab { min-width: 0; padding: 8px; border: 1px solid var(--line); border-top: 4px solid var(--desk); border-radius: 7px; background: white; color: var(--ink); cursor: pointer; text-align: left; }
+    .desk-tab strong, .desk-tab span { display: block; }
+    .desk-tab strong { font-size: .72rem; }
+    .desk-tab-status { width: max-content; margin-top: 5px !important; padding: 2px 5px; border-radius: 99px; font-size: .55rem !important; font-weight: 900; letter-spacing: .03em; }
+    .desk-tab.incomplete .desk-tab-status { background: #fff0c5; color: #76520d; }
+    .desk-tab.complete .desk-tab-status { background: #d8eee4; color: #155d45; }
+    .desk-tab.active { background: var(--desk); color: white; }
+    .desk-tab.active .desk-tab-status { background: white; opacity: 1; }
+    .desk-tab.active.incomplete .desk-tab-status { color: #76520d; }
+    .desk-tab.active.complete .desk-tab-status { color: #155d45; }
+    .desk-navigation { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: auto; padding: 10px; border-top: 1px solid color-mix(in srgb, var(--desk) 20%, white); }
+    .desk-navigation .secondary { margin: 0; }
+    .story-outlook { display: grid; grid-template-columns: 88px minmax(180px, 1fr); gap: 5px 12px; align-items: center; margin-top: 11px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
+    .story-outlook > strong { grid-row: 1 / 3; align-self: center; font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
+    .story-outlook > small { grid-column: 2; color: var(--muted); font-size: .62rem; }
+    .outlook-row { display: grid; grid-template-columns: 42px 1fr 26px; gap: 7px; align-items: center; font-size: .68rem; font-weight: 800; }
+    .outlook-row b { text-align: right; font-variant-numeric: tabular-nums; }
+    .outlook-track { height: 8px; overflow: hidden; border-radius: 10px; background: #ded8cf; }
+    .outlook-track > i { display: block; height: 100%; border-radius: inherit; transition: width .3s ease; }
+    .outlook-track .reach { background: var(--blue); }
+    .outlook-track .trust { background: var(--green); }
+    .story-column .story-outlook { grid-template-columns: 1fr; margin-top: auto; padding: 10px; }
+    .story-column .story-outlook > strong, .story-column .story-outlook > small { grid-column: 1; grid-row: auto; }
+    .active-story > .desk-tabs { margin-top: 0; }
+    .workspace-title { margin: 0; color: var(--muted); font-size: .7rem; font-weight: 900; letter-spacing: .09em; text-transform: uppercase; }
+    .desk-bulk-choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+    .desk-head-bulk > small { display: block; margin-bottom: 3px; color: white; font-size: .53rem; font-weight: 850; letter-spacing: .05em; text-transform: uppercase; opacity: .85; }
+    .desk-head-bulk button { min-width: 0; border: 1px solid rgba(255,255,255,.8); border-radius: 5px; padding: 5px 3px; background: rgba(255,255,255,.12); color: white; cursor: pointer; font-size: .59rem; font-weight: 850; }
+    .desk-head-bulk button:hover { background: white; color: var(--desk); }
+    .day-action { margin-top: 14px; padding: 14px; border: 2px solid var(--ink); border-radius: 9px; text-align: center; }
+    .day-action .primary { width: 100%; margin-top: 8px; }
+    .summary-note { margin-top: 14px; padding: 10px; border-left: 4px solid var(--gold); background: #fff7df; color: var(--ink) !important; font-size: .8rem; }
+    .report-section { margin-top: 18px; }
+    .report-section + .report-section { padding-top: 17px; border-top: 1px solid var(--line); }
+    .report-section h3 { margin-bottom: 9px; font: 800 1rem/1.2 system-ui; }
+    .report-explanation { margin: 10px 0 !important; color: var(--ink) !important; font-size: .9rem; }
+    .driver-box { margin: 10px 0; padding: 10px 12px; border-left: 4px solid var(--blue); background: #edf6fa; color: var(--ink); }
+    .driver-box > strong { font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; }
+    .driver-box ul { margin: 5px 0 0; padding-left: 1.1rem; }
+    .driver-box li { font-size: .82rem; }
+    .driver-box li + li { margin-top: 4px; }
+    .story-effects { margin: 11px 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .story-effects > strong { display: block; padding: 7px 9px; background: var(--paper); font-size: .68rem; letter-spacing: .05em; text-transform: uppercase; }
+    .story-effect-row { display: grid; grid-template-columns: 1fr; gap: 7px; padding: 9px; border-top: 1px solid var(--line); }
+    .story-effect-row b, .story-effect-row small, .story-effect-row span { display: block; }
+    .story-effect-row b { font-size: .72rem; }
+    .story-effect-row small { color: var(--muted); font-size: .62rem; }
+    .story-effect-row span { font-size: .68rem; font-weight: 800; }
+    .effect-totals { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+    .effect-reasons { margin: 7px 0 0; padding-left: 1.15rem; color: var(--ink); }
+    .effect-reasons li { padding-left: 2px; font-size: .72rem; line-height: 1.4; }
+    .effect-reasons li + li { margin-top: 5px; }
+    .effect-reasons .bonus::marker { color: var(--green); }
+    .effect-reasons .penalty::marker { color: var(--red); }
+    .effect-reason-empty { margin-top: 6px; font-size: .7rem; }
+    .effect-positive { color: var(--green); }
+    .effect-negative { color: var(--red); }
+    .effect-neutral { color: var(--muted); }
+    .effect-rollup { display: grid; grid-template-columns: 1fr; gap: 7px; }
+    .effect-rollup > div { padding: 9px; border: 1px solid var(--line); border-radius: 7px; background: var(--paper); }
+    .effect-rollup strong, .effect-rollup span { display: block; }
+    .effect-rollup span { margin-top: 3px; font-size: .68rem; font-weight: 800; }
+    .effect-rollup details { margin-top: 7px; border-top: 1px solid var(--line); padding-top: 6px; }
+    .effect-rollup summary { color: var(--blue); cursor: pointer; font-size: .68rem; font-weight: 850; }
+    .rollup-story { margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--line); }
+    .rollup-story > b { font-size: .72rem; }
+    .impact-viz { margin-top: 16px; padding: 14px; border: 1px solid var(--line); border-radius: 9px; background: var(--paper); }
+    .impact-meter { display: grid; grid-template-columns: 55px 1fr 35px; gap: 8px; align-items: center; margin: 7px 0; font-size: .75rem; font-weight: 800; }
+    .impact-track { height: 12px; overflow: hidden; border-radius: 20px; background: #ddd7ce; }
+    .impact-fill { width: 0; height: 100%; border-radius: inherit; transition: width 900ms cubic-bezier(.2,.8,.2,1); }
+    .impact-fill.reach { background: var(--blue); }
+    .impact-fill.trust { background: var(--green); }
+    .audience-flow { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; margin-top: 15px; }
+    .audience-source, .audience-outcomes > div { border: 1px solid var(--line); border-radius: 8px; padding: 10px; background: var(--card); text-align: center; }
+    .audience-source strong, .audience-outcomes strong { display: block; font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+    .flow-arrow { color: var(--muted); font-size: 1.5rem; }
+    .audience-outcomes { display: grid; gap: 6px; }
+    .audience-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; min-height: 24px; margin-top: 7px; }
+    .audience-dot { width: 9px; height: 9px; border-radius: 50%; opacity: 0; transform: scale(.2); animation: audience-in .28s ease-out forwards; }
+    .audience-dot.one-time { background: var(--gold); }
+    .audience-dot.repeat { background: var(--green); }
+    .day-bars { display: grid; gap: 8px; margin-top: 16px; }
+    .day-bar { display: grid; grid-template-columns: 48px 1fr 70px; align-items: center; gap: 8px; font-size: .73rem; font-weight: 800; }
+    .day-bar-track { display: flex; height: 16px; overflow: hidden; border-radius: 20px; background: #ddd7ce; }
+    .day-bar-track span { width: 0; transition: width 900ms cubic-bezier(.2,.8,.2,1); }
+    .day-bar-track .one-time { background: var(--gold); }
+    .day-bar-track .repeat { background: var(--green); }
+    .audience-breakdown { margin: 12px 0 16px; padding: 13px; border: 1px solid var(--line); border-radius: 9px; background: var(--paper); }
+    .audience-breakdown-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .audience-category { padding: 11px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); text-align: center; }
+    .audience-category .swatch { display: inline-block; width: 10px; height: 10px; margin-right: 5px; border-radius: 50%; }
+    .audience-category strong { display: block; margin-top: 3px; font-size: 1.55rem; font-variant-numeric: tabular-nums; }
+    .audience-category.unique .swatch, .audience-stack .unique { background: var(--gold); }
+    .audience-category.repeat .swatch, .audience-stack .repeat { background: var(--green); }
+    .audience-category.subscriber .swatch, .audience-stack .subscriber { background: #7050a0; }
+    .audience-stack { display: flex; height: 18px; margin-top: 11px; overflow: hidden; border-radius: 20px; background: #ddd7ce; }
+    .audience-stack span { width: 0; transition: width 900ms cubic-bezier(.2,.8,.2,1); }
+    .logic-animation { position: relative; display: grid; gap: 9px; margin-top: 12px; }
+    .logic-step { position: relative; display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: start; padding: 11px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); opacity: 1; transform: none; }
+    .logic-step:not(:last-child)::after { content: ''; position: absolute; left: 27px; top: 45px; width: 2px; height: 18px; background: var(--line); }
+    .logic-number { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: white; font-weight: 900; }
+    .logic-copy strong { display: block; font-size: .84rem; }
+    .logic-copy p { margin-top: 3px; color: var(--muted); font-size: .75rem; }
+    .logic-values { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+    .logic-values span { padding: 3px 7px; border-radius: 99px; background: white; border: 1px solid var(--line); font-size: .68rem; font-weight: 800; }
+    .logic-animation.sequencing .logic-step { opacity: .16; transform: translateY(5px); filter: grayscale(1); transition: opacity .35s, transform .35s, filter .35s, border-color .35s, box-shadow .35s, background .35s; }
+    .logic-animation.sequencing .logic-step.visible { opacity: 1; transform: translateY(0); filter: none; }
+    .logic-animation.sequencing .logic-step.active { border-color: var(--blue); background: white; box-shadow: 0 0 0 3px rgba(35,107,142,.15); }
+    .logic-values b { font-variant-numeric: tabular-nums; }
+    .replay-logic { margin-top: 9px; border: 1px solid var(--ink); border-radius: 7px; padding: 7px 11px; background: white; color: var(--ink); cursor: pointer; font-weight: 800; }
+    .result-grid .metric { opacity: 0; transform: translateY(6px); animation: metric-in .3s ease-out forwards; }
+
+    .intro, .results {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(23, 33, 43, .82);
+    }
+    .modal { width: min(650px, 100%); max-height: calc(100dvh - 40px); overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; background: var(--card); border-radius: 12px; padding: clamp(22px, 5vw, 42px); box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+    .modal h2 { font: 800 clamp(1.5rem, 5vw, 2.5rem)/1.05 Georgia, serif; letter-spacing: 0; text-transform: none; }
+    .modal p { margin-top: 12px; color: var(--muted); }
+    .primary { margin-top: 22px; background: var(--ink); color: white; padding-inline: 22px; }
+    .secondary { background: #e8e2d9; color: var(--ink); }
+    .result-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 18px; }
+    .result-grid.allocation-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .result-grid .metric { padding: 14px; }
+    .hidden { display: none !important; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+
+    @keyframes enter { from { transform: translateY(-6px); opacity: 0; } }
+    @keyframes metric-in { to { opacity: 1; transform: translateY(0); } }
+    @keyframes audience-in { to { opacity: 1; transform: scale(1); } }
+    @keyframes story-arrive { from { opacity: 0; transform: translateX(-24px) scale(.94); } to { opacity: 1; transform: translateX(0) scale(1); } }
+
+    @media (max-width: 950px) {
+      header { align-items: flex-start; flex-direction: column; }
+      .status { width: 100%; overflow-x: auto; }
+      .header-actions, .help-button { width: 100%; }
+      main { grid-template-columns: 1fr; }
+      .story-workspace { grid-template-columns: minmax(190px, .65fr) minmax(0, 1.6fr); }
+      .panel:last-child { grid-column: 1 / -1; min-height: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    }
+
+    @media (max-width: 650px) {
+      .shell { padding: 10px; }
+      .status { grid-template-columns: repeat(5, minmax(92px, 1fr)); }
+      main { grid-template-columns: 1fr; }
+      .panel { min-height: auto; }
+      .reader-list { max-height: 250px; }
+      .panel:last-child { grid-column: auto; grid-template-columns: 1fr; }
+      .assignments button { min-height: 48px; }
+      .task-card .assignments { grid-template-columns: 1fr; }
+      .story-tabs, .news-board { grid-template-columns: 1fr; }
+      .story-workspace { grid-template-columns: 1fr; }
+      .story-tabs { grid-template-columns: 1fr; }
+      .desk-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .board-choices button { min-height: 46px; }
+      .board-task { grid-template-columns: 1fr; gap: 6px; }
+      .desk-head { grid-template-columns: 1fr; gap: 7px; }
+      .story-outlook { grid-template-columns: 1fr; }
+      .story-outlook > strong, .story-outlook > small { grid-column: 1; grid-row: auto; }
+      .result-grid.allocation-grid, .audience-breakdown-cards { grid-template-columns: 1fr; }
+      .story-effect-row, .effect-rollup { grid-template-columns: 1fr; }
+    }
+
+    @media (max-height: 720px) {
+      .intro, .results { padding: 10px; }
+      .modal { max-height: calc(100dvh - 20px); padding: 22px; }
+      .modal h2 { font-size: 1.9rem; }
+      .report-section { margin-top: 13px; }
+      .report-section + .report-section { padding-top: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .result-grid .metric, .audience-dot { opacity: 1; transform: none; }
+      .logic-animation.sequencing .logic-step { opacity: 1; transform: none; filter: none; }
+      .story-tab.story-enter { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div>
+        <h1>AI News Game</h1>
+      </div>
+      <div class="status" aria-label="Game status">
+        <div class="metric"><span>Day</span><strong id="day">1/3</strong></div>
+        <div class="metric"><span>Tasks assigned</span><strong id="assigned">0/20</strong></div>
+        <div class="metric"><span>One-time visitors</span><strong id="one-time-header">0</strong></div>
+        <div class="metric"><span>Repeat visitors</span><strong id="repeat-header">0</strong></div>
+        <div class="metric"><span>Subscribers</span><strong id="subscriber-header">0</strong></div>
+      </div>
+      <div class="header-actions"><a class="help-button" href="../">All editions</a><button type="button" class="help-button" id="open-help">How to play</button></div>
+    </header>
+
+    <main>
+      <section class="panel" aria-labelledby="stories-title">
+        <h2 id="stories-title">Newsroom desk</h2>
+        <p class="tiny" style="margin-bottom:10px">Review today’s story, then move through the four newsroom desks to make all 20 editorial decisions.</p>
+        <div class="story-list" id="stories"></div>
+      </section>
+
+      <aside class="panel" aria-labelledby="resources-title">
+        <div>
+          <h2 id="resources-title">Your allocations</h2>
+          <div class="allocation-list">
+            <div class="allocation-item"><strong>Human only</strong><span id="human-count">0</span></div>
+            <div class="allocation-item"><strong>AI only</strong><span id="ai-count">0</span></div>
+            <div class="allocation-item"><strong>Human + AI</strong><span id="collab-count">0</span></div>
+          </div>
+        </div>
+        <div>
+          <h2>Newsroom log</h2>
+          <div class="log" id="log" aria-live="polite"></div>
+        </div>
+      </aside>
+    </main>
+    <footer class="project-footer">
+      <p><strong>AI News Game</strong> is a research and educational project developed by Daniel Trielli at the University of Maryland’s Philip Merrill College of Journalism. Supported by the Lucy Dalglish Faculty Fund for Media &amp; Democracy.</p>
+      <p>The views expressed through this project do not necessarily represent the University of Maryland. Player choices and saved progress stay in the browser. Cookie-free analytics counts visits, and optional feedback is handled separately through Google Forms. Contact: <a href="mailto:dtrielli@umd.edu">dtrielli@umd.edu</a>.</p>
+      <p><a href="../about.html"><strong>About this project</strong></a></p>
+    </footer>
+  </div>
+
+  <div class="intro" id="intro" role="dialog" aria-modal="true" aria-labelledby="intro-title">
+    <div class="modal">
+      <div class="kicker">Three-day newsroom simulation</div>
+      <h2 id="intro-title">Decide how the news gets made.</h2>
+      <p>For every story, complete the tasks at the Reporting, Editing, Packaging, and Audience desks.</p>
+      <p>Assign each task to Human, AI, or Human + AI (verified automation). There is no clock, and every choice can be revised before publication.</p>
+      <p class="privacy-note">Your progress and game choices stay in this browser. This site uses cookie-free Cloudflare Web Analytics to count visits, but does not transmit your gameplay decisions.</p>
+      <div class="startup-error hidden" id="startup-error" role="alert"></div>
+      <div class="button-row"><button class="primary" id="start">Start a new game</button><button class="secondary hidden" id="resume">Resume saved game</button></div>
+    </div>
+  </div>
+
+  <div class="results hidden" id="help" role="dialog" aria-modal="true" aria-labelledby="help-title">
+    <div class="modal">
+      <div class="kicker">Instructions and scoring</div>
+      <h2 id="help-title" tabindex="-1">How to play</h2>
+      <p>Across three days, assign all 20 newsroom tasks for one story each day. Choose Human, AI, or Human + AI. You may revise any assignment until you finish the day.</p>
+      <section class="report-section"><h3>What your choices do</h3><p>Human assignments emphasize trust, AI emphasizes reach, and Human + AI adds oversight. Story type makes AI a better or riskier fit for particular tasks. The Story outlook combines your assignments into live reach and trust estimates. Reach attracts readers, while trust helps retain them.</p></section>
+      <section class="report-section"><h3>Moving through the board</h3><p>Use the four desk tabs to move between Reporting, Editing, Packaging, and Audience. Each tab shows whether its five tasks are complete.</p></section>
+      <section class="report-section"><h3>About the scoring model</h3><p>The numerical effects are provisional game rules for playtesting. They are not empirical claims about the performance of people or AI. The final score combines traffic, repeat visitors, and subscribers.</p></section>
+      <button class="primary" id="close-help">Return to the game</button>
+    </div>
+  </div>
+
+  <div class="results hidden" id="day-summary" role="dialog" aria-modal="true" aria-labelledby="day-summary-title">
+    <div class="modal">
+      <div class="kicker" id="day-summary-kicker">Day complete</div>
+      <h2 id="day-summary-title" tabindex="-1">Today’s newsroom choices</h2>
+      <section class="report-section" aria-labelledby="editorial-choices-title">
+        <h3 id="editorial-choices-title">Your editorial choices</h3>
+        <div class="result-grid allocation-grid" id="day-summary-grid"></div>
+        <p class="report-explanation" id="editorial-summary"></p>
+      </section>
+      <section class="report-section" aria-labelledby="impact-choices-title">
+        <h3 id="impact-choices-title">Impact of your choices</h3>
+        <div class="report-explanation" id="choice-impact-summary"></div>
+        <div id="day-impact-container"></div>
+        <p class="report-explanation" id="readership-summary"></p>
+      </section>
+      <button class="primary" id="next-day">Begin next day</button>
+    </div>
+  </div>
+
+  <div class="results hidden" id="results" role="dialog" aria-modal="true" aria-labelledby="results-title">
+    <div class="modal">
+      <div class="kicker">Three-day simulation complete</div>
+      <h2 id="results-title" tabindex="-1">Your newsroom across three days</h2>
+      <section class="report-section" aria-labelledby="final-editorial-title">
+        <h3 id="final-editorial-title">Your three-day editorial strategy</h3>
+        <div class="result-grid allocation-grid" id="final-allocation-grid"></div>
+        <p class="report-explanation" id="final-editorial-summary"></p>
+      </section>
+      <section class="report-section" aria-labelledby="final-story-effects-title">
+        <h3 id="final-story-effects-title">Story-type bonuses and penalties</h3>
+        <div id="final-story-effects"></div>
+      </section>
+      <section class="report-section" aria-labelledby="final-impact-title">
+        <h3 id="final-impact-title">How readership changed</h3>
+        <div id="final-day-bars-container"></div>
+        <p class="report-explanation" id="final-readership-summary"></p>
+      </section>
+      <section class="report-section" aria-labelledby="logic-title">
+        <h3 id="logic-title">How your choices became a score</h3>
+        <div id="logic-animation"></div>
+        <button type="button" class="replay-logic" id="replay-logic">Replay explanation</button>
+      </section>
+      <section class="report-section" aria-labelledby="final-audience-title">
+        <h3 id="final-audience-title">Your final audience</h3>
+        <div id="final-audience-breakdown"></div>
+        <div class="result-grid" id="result-grid"></div>
+        <p class="report-explanation" id="reflection"></p>
+      </section>
+      <section class="report-section" aria-labelledby="tester-feedback-title">
+        <h3 id="tester-feedback-title">Help improve the game</h3>
+        <p>If you have a minute, tell us what was clear and what should change.</p>
+        <p><a class="text-link" href="https://forms.gle/y41FUJFVD3dGhrK59" target="_blank" rel="noopener noreferrer">Share short playtest feedback</a> <span class="tiny">(opens a Google Form)</span></p>
+      </section>
+      <button class="primary" id="restart">Play again</button>
+    </div>
+  </div>
+
+  <div class="sr-only" id="announcer" aria-live="assertive"></div>
+  <noscript><p class="startup-error">This game requires JavaScript. Enable JavaScript and reload the page.</p></noscript>
+
+  <script>
+    window.addEventListener('error', function () {
+      var box = document.getElementById('startup-error');
+      if (!box) return;
+      box.textContent = 'The game could not load its configuration files. Make sure the entire folder—including the data folder—was uploaded, then reload the page.';
+      box.classList.remove('hidden');
+    });
+  </script>
+  <script>window.AI_NEWS_GAME_CONFIG = { storiesPerDay: 1, editionKey: 'standard', editionLabel: 'Main game' };</script>
+  <script src="../data/stories.js?v=1.26"></script>
+  <script src="../data/round-events.js"></script>
+  <script src="../data/resource-rules.js"></script>
+  <script src="../app.js?v=shared-content-1.26"></script>
+  <!-- Cloudflare Web Analytics -->
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"1c67eddc22df48e2a0193da0eef2a2bc"}'></script>
+  <!-- End Cloudflare Web Analytics -->
+</body>
+</html>

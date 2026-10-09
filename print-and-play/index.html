@@ -21,38 +21,38 @@
     p { margin: 0; }
     p + p { margin-top: 10px; }
     .status { display: inline-block; margin-top: 14px; padding: 5px 9px; border-radius: 99px; background: var(--ink); color: white; font-size: .72rem; font-weight: 850; letter-spacing: .05em; text-transform: uppercase; }
-    .download { display: inline-block; margin-top: 14px; padding: 11px 16px; border-radius: 8px; background: var(--blue); color: white; font-weight: 850; text-decoration: none; }
+    .downloads { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .download { display: block; padding: 14px 16px; border-radius: 8px; background: var(--blue); color: white; font-weight: 850; text-align: center; text-decoration: none; }
     .download:hover { filter: brightness(.92); }
     .details { margin-top: 12px; padding: 14px 16px; border-left: 4px solid var(--blue); background: var(--paper); }
-    .materials { margin: 10px 0 0; padding-left: 1.2rem; color: var(--muted); }
-    .materials li + li { margin-top: 5px; }
+    .guide-link { font-weight: 800; }
     footer { margin-top: 18px; color: var(--muted); font-size: .75rem; }
-    @media (max-width: 600px) { header { display: grid; align-items: start; } .back { width: max-content; } }
+    @media (max-width: 600px) { header { display: grid; align-items: start; } .back { width: max-content; } .downloads { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
   <div class="shell">
     <header>
       <div><p class="kicker">AI News Game</p><h1>Print-and-play materials</h1></div>
-      <a class="back" href="../about.html">Return to About</a>
+      <a class="back" href="../">Return to home</a>
     </header>
     <main>
-      <h2>Pen-and-paper playtest</h2>
-      <p>A facilitator presents a randomly drawn news story. Players discuss the story and assign Human, AI, or Human + AI to each of 20 newsroom tasks. The facilitator then uses the selected story card to calculate and discuss the audience outcomes.</p>
-      <a class="download" href="AI_News_Game_Pen_and_Paper_Playtest_v7.10.pdf" download>Download the pen-and-paper game (PDF)</a>
-      <div class="details"><strong>The six-page file includes:</strong> one reusable player board and 10 facilitator cards, with two cards on each cut sheet. Print on US Letter paper in landscape orientation.</div>
+      <h2>Download the game</h2>
+      <p>Players use the board to choose Human, AI, or Human + AI for 20 newsroom tasks. The facilitator introduces the story, calculates the results, and leads the discussion.</p>
+      <div class="downloads">
+        <a class="download" href="AI_News_Game_Player_Board.pdf" download>Download player board</a>
+        <a class="download" href="AI_News_Game_Facilitator_Cards.pdf" download>Download facilitator cards</a>
+      </div>
+      <div class="details"><strong>Printing:</strong> Use US Letter paper in landscape orientation. Print one board for each player or team. The facilitator-card file contains 10 stories, with two cards per page.</div>
+
+      <h2>Facilitate online</h2>
+      <p>You can use the <a class="guide-link" href="../facilitator/">online facilitator guide</a> instead of printing the facilitator cards.</p>
+
+      <h2>Playtest note</h2>
+      <p>The scoring and story effects are discussion tools, not empirical claims about people or AI.</p>
       <span class="status">Playtest version 7.10</span>
-
-      <h2>Planned versions</h2>
-      <ul class="materials">
-        <li><strong>Pen and paper:</strong> available above as a playtest draft.</li>
-        <li><strong>Cards and chips:</strong> player boards, facilitator materials, cards, and assignment chips are still in development.</li>
-      </ul>
-
-      <h2>Before playing</h2>
-      <p>These materials are still being tested. The scoring model and story effects are discussion tools, not empirical claims about the performance of people or AI.</p>
     </main>
-    <footer>Version 7.10 playtest materials | Revised October 3, 2026<br>© 2026 Daniel Trielli. All rights reserved.</footer>
+    <footer>Version 7.10 playtest materials | Revised October 3, 2026<br>Developed by Daniel Trielli at the University of Maryland.</footer>
   </div>
   <!-- Cloudflare Web Analytics -->
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"1c67eddc22df48e2a0193da0eef2a2bc"}'></script>
