@@ -1,6 +1,6 @@
 # AI News Game
 
-**Current build: Website 1.31 with print and online in-class versions**
+**Current build: Website 1.32 with print and online in-class versions**
 
 A barebones digital prototype of the AI News Game. It closely follows the current tabletop board: Reporting, Editing, Packaging, and Audience desks, each containing five tasks.
 
