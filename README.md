@@ -1,6 +1,6 @@
 # AI News Game
 
-**Current build: Website 1.29**
+**Current build: Website 1.31 with print and online in-class versions**
 
 A barebones digital prototype of the AI News Game. It closely follows the current tabletop board: Reporting, Editing, Packaging, and Audience desks, each containing five tasks.
 
@@ -20,7 +20,8 @@ GitHub will provide a public URL after the first deployment finishes.
 
 ## Current prototype
 
-- A landing page linking to both digital editions, the pen-and-paper materials, the facilitator guide, and the About page
+- A landing page linking to the digital game, expanded digital game, printed classroom version, online classroom version, facilitator guide, and About page
+- An online classroom board that matches the printed player board and reports Human, AI, Human + AI, Human-involvement, and AI-involvement totals without running the audience simulation
 - A main digital edition with one story per day and an expanded edition with three stories per day
 - Three untimed days with a summary after each day in both editions
 - Separate browser save states for the main and expanded editions

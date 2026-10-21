@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Play the AI News Game online or download the pen-and-paper classroom version.">
+  <meta name="description" content="Play the AI News Game individually or use its print and online in-class versions.">
   <title>AI News Game</title>
   <style>
     :root { --ink:#17212b; --muted:#5d6975; --paper:#f4f1ea; --card:#fffefa; --line:#d7d0c5; --blue:#236b8e; --green:#25785b; --gold:#d59a28; --shadow:0 7px 24px rgba(35,33,28,.08); }
@@ -20,7 +20,9 @@
     .module-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
     .card { display:flex; flex-direction:column; min-width:0; padding:clamp(20px,4vw,30px); border:1px solid var(--line); border-radius:12px; background:var(--card); box-shadow:var(--shadow); }
     .card.featured { border-top:7px solid var(--green); }
+    .card.expanded { border-top:7px solid var(--blue); }
     .card.paper { border-top:7px solid var(--gold); }
+    .card.online { border-top:7px solid #a94d79; }
     .card.about { grid-column:1 / -1; border-top:7px solid var(--blue); }
     .eyebrow { margin:0 0 7px; color:var(--muted); font-size:.74rem; font-weight:850; letter-spacing:.1em; text-transform:uppercase; }
     h2 { margin:0 0 9px; font:700 clamp(1.45rem,3vw,2rem)/1.08 Georgia,serif; }
@@ -50,16 +52,31 @@
         <section class="card featured">
           <p class="eyebrow">Play online</p>
           <h2>Digital game</h2>
-          <p>Make task-by-task editorial decisions and see how they affect reach, trust, and audience relationships. Start with one story per day or choose the longer three-story edition.</p>
-          <div class="details"><span>3 days</span><span>Short and expanded editions</span><span>Individual play</span></div>
-          <div class="actions"><a class="button" href="digital/">Play the main game</a><a class="button secondary" href="expanded/">Play the expanded game</a></div>
+          <p>Make editorial decisions for one story per day and see how they affect reach, trust, and audience relationships.</p>
+          <div class="details"><span>3 days</span><span>1 story per day</span><span>Individual play</span></div>
+          <div class="actions"><a class="button" href="digital/">Play the digital game</a></div>
+        </section>
+
+        <section class="card expanded">
+          <p class="eyebrow">Longer individual play</p>
+          <h2>Expanded digital game</h2>
+          <p>Use the full simulation with three stories each day, separate editorial plans, and the complete audience model.</p>
+          <div class="details"><span>3 days</span><span>3 stories per day</span><span>Individual play</span></div>
+          <div class="actions"><a class="button" href="expanded/">Play the expanded game</a></div>
         </section>
 
         <section class="card paper">
-          <p class="eyebrow">Group and classroom play</p>
-          <h2>Pen-and-paper game</h2>
-          <p>Download player boards and facilitator cards, or use the online facilitator guide for college-level and high-school sessions.</p>
-          <div class="actions"><a class="button" href="print-and-play/">Printable materials</a><a class="button secondary" href="facilitator/">Facilitator guide</a></div>
+          <p class="eyebrow">Printable classroom play</p>
+          <h2>In-class version (print)</h2>
+          <p>Download the player board and facilitator cards for an in-person college or high-school session.</p>
+          <div class="actions"><a class="button" href="print-and-play/">Download printable materials</a></div>
+        </section>
+
+        <section class="card online">
+          <p class="eyebrow">Facilitated classroom play</p>
+          <h2>In-class version (online)</h2>
+          <p>Students make the same 20 choices in an online board. The facilitator uses the guide to introduce stories, calculate outcomes, and lead discussion.</p>
+          <div class="actions"><a class="button" href="classroom/">Open online player board</a><a class="button secondary" href="facilitator/">Facilitator guide</a></div>
         </section>
 
         <section class="card about">

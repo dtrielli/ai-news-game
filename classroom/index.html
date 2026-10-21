@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Use the AI News Game player board online during a facilitated classroom session.">
+  <title>In-class version (online) · AI News Game</title>
+  <link rel="stylesheet" href="styles.css?v=1.30">
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div>
+        <p class="kicker">AI News Game · Classroom play</p>
+        <h1>In-class version (online)</h1>
+        <p class="lede">Choose who should perform each newsroom task. Your facilitator will explain the story and discuss the results.</p>
+      </div>
+      <a class="home-link" href="../">Return to home</a>
+    </header>
+
+    <main>
+      <section class="setup-card" aria-labelledby="story-heading">
+        <div class="setup-controls">
+          <label>Guide version
+            <select id="audience-version">
+              <option value="college">College</option>
+              <option value="highSchool">High school</option>
+            </select>
+          </label>
+          <label>Story
+            <select id="story-select"></select>
+          </label>
+          <label>Player or team name
+            <input id="player-name" type="text" maxlength="80" placeholder="Optional">
+          </label>
+        </div>
+        <article class="story-brief">
+          <p class="story-meta" id="story-meta"></p>
+          <h2 id="story-heading"></h2>
+          <p id="story-background"></p>
+          <details>
+            <summary>What readers expect from this story</summary>
+            <div class="expectation-copy">
+              <p id="story-expectation"></p>
+              <p><strong>Editorial priority:</strong> <span id="story-focus"></span></p>
+            </div>
+          </details>
+        </article>
+      </section>
+
+      <section class="progress-card" aria-label="Assignment progress and totals">
+        <div class="progress-heading">
+          <div><span>Assignments complete</span><strong id="progress-count">0 / 20</strong></div>
+          <button type="button" class="secondary" id="reset-board">Clear choices</button>
+        </div>
+        <div class="totals" aria-live="polite">
+          <div><span>Human only</span><strong id="human-only">0</strong></div>
+          <div><span>AI only</span><strong id="ai-only">0</strong></div>
+          <div><span>Human + AI</span><strong id="human-ai">0</strong></div>
+          <div class="involvement human-total"><span>Tasks with humans</span><strong id="tasks-human">0 / 20</strong><small>Human or Human + AI</small></div>
+          <div class="involvement ai-total"><span>Tasks with AI</span><strong id="tasks-ai">0 / 20</strong><small>AI or Human + AI</small></div>
+        </div>
+        <p class="completion-message" id="completion-message">Make one choice for every task.</p>
+      </section>
+
+      <section aria-labelledby="decisions-title">
+        <div class="section-heading">
+          <div><p class="kicker">Your newsroom plan</p><h2 id="decisions-title">Editorial decisions</h2></div>
+          <p>Choose one option in each row. You can change any choice before sharing your totals.</p>
+        </div>
+        <nav class="desk-tabs" id="desk-tabs" aria-label="Newsroom desks"></nav>
+        <div id="desk-panel"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Developed by Daniel Trielli at the University of Maryland’s Philip Merrill College of Journalism. Supported by the Lucy Dalglish Faculty Fund for Media &amp; Democracy.</p>
+      <p>Your selections stay in this browser. Cookie-free analytics counts visits but does not receive your game choices.</p>
+    </footer>
+  </div>
+
+  <noscript><p class="noscript">This board requires JavaScript. Enable it and reload the page.</p></noscript>
+  <script src="../data/stories.js?v=1.30"></script>
+  <script src="app.js?v=1.30"></script>
+  <!-- Cloudflare Web Analytics -->
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"1c67eddc22df48e2a0193da0eef2a2bc"}'></script>
+  <!-- End Cloudflare Web Analytics -->
+</body>
+</html>
